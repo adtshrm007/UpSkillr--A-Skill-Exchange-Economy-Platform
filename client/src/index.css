@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Radon Deco";
+  src: url("./assets/Radon Deco.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Grow Majour";
+  src: url("./assets/GROWMAJOUR.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Mooxy";
+  src: url("./assets/mooxy.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Cigutera";
+  src: url("./assets/Ciguatera.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Radon Regular";
+  src: url("./assets/Radon.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Disriete";
+  src: url("./assets/Disriete-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "NGL";
+  src: url("./assets/NCLGasdrifo-Demo.otf");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Rose";
+  src: url("./assets/Rosehot.ttf");
+}
+@theme {
+  --font-aboreto: Aboreto, sans-serif;
+  --font-growmajour: Grow Majour, sans-serif;
+  --font-ciguateraregular: Ciguater Regular, sans-serif;
+  --font-radonbold: Radon Bold, sans-serif;
+  --font-mooxy: Mooxy, sans-serif;
+  --font-bellotatext: BellotaText, sans-serif;
+  --font-cabin: Cabin, sans-serif;
+  --font-abzee: ABeeZee, sans-serif;
+  --font-radon: Radon Deco, sans-serif;
+  --font-growmajour: Grow Majour, sans-serif;
+  --font-ciguatera: Ciguatera, sans-serif;
+  --font-radonregular: Radon Regular, sans-serif;
+  --font-dis: Disriete, sans-serif;
+  --font-ngl: NGL, sans-serif;
+  --font-rose: Rose, sans-serif;
+}
