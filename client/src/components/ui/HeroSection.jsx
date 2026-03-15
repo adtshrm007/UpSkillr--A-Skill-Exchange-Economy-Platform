@@ -1,24 +1,25 @@
-import React from "react";
 import logo from "../../assets/Logo.png";
 import image1 from "../../assets/image1.png";
 import image2 from "../../assets/image2.png";
 import image3 from "../../assets/image3.png";
 import image4 from "../../assets/imag4.svg";
 import image5 from "../../assets/image5.png";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const HeroSection = () => {
   return (
     <div className="flex flex-col min-h-screen w-full bg-[#0A0A0A] font-mono text-gray-100 overflow-x-clip">
       {/* 1. FIXED HEADER */}
       <header className="fixed top-0 w-full z-100 px-8 py-5 flex items-center justify-between backdrop-blur-xl bg-[#0A0A0A]/70 border-b border-white/5">
-        <img
-          src={logo}
-          alt="logo"
-          className="w-10 h-10 transition-transform group-hover:rotate-12 duration-500 size-5"
-        />
+        <div className="flex">
+          <img
+            src={logo}
+            alt="logo"
+            className="w-10 h-10 transition-transform group-hover:rotate-12 duration-500 size-5"
+          />
 
-        <span className="font-black font-mono">UpSkillr</span>
+          <span className="mt-2">UpSkillr</span>
+        </div>
 
         <nav className="hidden md:flex items-center gap-10 text-[10px] uppercase tracking-[0.3em] text-gray-500 font-black">
           <p className="hover:text-white cursor-pointer transition-colors">
@@ -29,9 +30,11 @@ const HeroSection = () => {
               Community
             </p>
           </div>
-          <div className="text-[#FF7849] bg-[#FF7849]/10 border border-[#FF7849]/20 px-6 py-2 rounded-full hover:bg-[#FF7849] hover:text-black transition-all">
-            Login
-          </div>
+          <Link to="/login">
+            <div className="text-[#FF7849] bg-[#FF7849]/10 border border-[#FF7849]/20 px-6 py-2 rounded-full hover:bg-[#FF7849] hover:text-black transition-all">
+              Login
+            </div>
+          </Link>
         </nav>
       </header>
 

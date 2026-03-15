@@ -5,23 +5,23 @@ import img from "../../assets/img.png";
 export default function FollowOurNews() {
   return (
     <section className="w-full min-h-screen bg-[#0A0A0A] flex flex-col font-mono text-white relative overflow-hidden border-t border-white/5">
-      
       {/* BACKGROUND GLOW */}
       <div className="absolute top-[20%] left-[-5%] w-72 h-72 bg-[#FF7849]/5 blur-[100px] rounded-full pointer-events-none"></div>
 
       {/* MAIN CONTENT AREA */}
       <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-24 px-8 py-20 z-10">
-        
         {/* LEFT: TEXT & FORM SECTION */}
         <div className="w-full lg:w-1/2 max-w-xl space-y-10">
           <header className="space-y-4">
             <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-tight">
-              Follow <br /> 
-              <span className="text-[#FF7849] drop-shadow-[0_0_15px_rgba(255,120,73,0.3)]">Our News</span>
+              Follow <br />
+              <span className="text-[#FF7849] drop-shadow-[0_0_15px_rgba(255,120,73,0.3)]">
+                Our News
+              </span>
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed max-w-md">
-              Stay in the loop with the latest protocol updates, community stories, 
-              and exclusive skill-swapping promotions.
+              Stay in the loop with the latest protocol updates, community
+              stories, and exclusive skill-swapping promotions.
             </p>
           </header>
 
@@ -31,8 +31,9 @@ export default function FollowOurNews() {
               <input
                 type="email"
                 placeholder="email@example.com"
-                className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-gray-300 placeholder:text-gray-700" />
-              
+                className="flex-1 bg-transparent border-none outline-none text-sm font-medium text-gray-300 placeholder:text-gray-700"
+              />
+
               <button className="bg-white text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FF7849] hover:text-black transition-all duration-300 active:scale-95">
                 Subscribe
               </button>
@@ -51,14 +52,15 @@ export default function FollowOurNews() {
             <img
               src={image7}
               alt="UpSkillr News"
-              className="w-full h-auto object-cover hidden lg:block opacity-90 group-hover:opacity-100 transition-opacity" />
-            
+              className="w-full h-auto object-cover hidden lg:block opacity-90 group-hover:opacity-100 transition-opacity"
+            />
+
             {/* Mobile Image */}
             <img
               src={img}
               alt="UpSkillr News Mobile"
-              className="w-full h-72 object-cover lg:hidden opacity-80" />
-            
+              className="w-full h-72 object-cover lg:hidden opacity-80"
+            />
           </div>
         </div>
       </div>
@@ -67,6 +69,6 @@ export default function FollowOurNews() {
       <div className="mt-auto border-t border-white/5 bg-[#0A0A0A]">
         <Footer />
       </div>
-    </section>);
-
+    </section>
+  );
 }
