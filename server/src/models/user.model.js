@@ -19,13 +19,11 @@ const SKILLS = [
 const skillSchema = new mongoose.Schema({
   skillName: {
     type: String,
-    enum: SKILLS,
     required: true,
   },
   skillLevel: {
     type: String,
     enum: ["Beginner", "Intermediate", "Advanced"],
-    required: true,
   },
 });
 

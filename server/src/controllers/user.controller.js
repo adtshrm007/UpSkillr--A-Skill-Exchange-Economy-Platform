@@ -52,7 +52,7 @@ export const loginUser = async (req, res) => {
     }
     const accessToken = await findUser.generateAccessToken();
     const refreshToken = await findUser.generateRefreshToken();
-    console.log(accessToken,refreshToken);
+    console.log(accessToken, refreshToken);
     findUser.refreshToken = refreshToken;
     await findUser.save();
     res.cookie("accessToken", accessToken, {
@@ -72,13 +72,63 @@ export const loginUser = async (req, res) => {
   }
 };
 
-
-export const getDashboard=async(req,res)=>{
+export const getDashboard = async (req, res) => {
   try {
-    const user=await userModel.findById(req.user?._id);
-    return res.json(user)
+    const user = await userModel.findById(req.user?._id);
+    return res.json(user);
   } catch (error) {
     console.log(error);
-    return res.status(500).json({message:"Server Error"})
+    return res.status(500).json({ message: "Server Error" });
   }
-}
+};
+
+export const getMe = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user?._id);
+    return res.json(user.name);
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const updateProfile = async (req, res) => {
+  const { name, email, teachingSkills, learningSkills } = req.body;
+  try {
+    const user = await userModel.findById(req.user?._id);
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "User not found.Please try logging in again" });
+    }
+
+    //update the name and email
+    user.name = name;
+    user.email = email;
+    console.log(teachingSkills);
+    if(!teachingSkills){
+      user.teachingSkills=[]
+    }
+    if (teachingSkills && Array.isArray(teachingSkills)) {
+      user.teachingSkills = teachingSkills.map((skill) => ({
+        skillName: skill.skillName,
+        skillLevel: skill.skillLevel || "Beginner",
+      }));
+    }
+    if (learningSkills && Array.isArray(learningSkills)) {
+      user.learningSkills = learningSkills.map((skill) => ({
+        skillName: skill.skillName,
+        skillLevel:"Beginner"
+      }));
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};

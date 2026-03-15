@@ -5,7 +5,7 @@ export const getDashboard = async () => {
     const response = await axios.get("http://localhost:3000/user/dashboard", {
       withCredentials: true,
     });
-    console.log(response);
+    return response.data;
   } catch (error) {
     console.log(error);
   }
