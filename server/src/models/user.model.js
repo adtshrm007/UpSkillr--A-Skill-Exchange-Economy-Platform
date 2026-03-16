@@ -1,37 +1,18 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-const SKILLS = [
-  "React",
-  "MongoDB",
-  "Java",
-  "Python",
-  "JavaScript",
-  "Node.js",
-  "Express.js",
-  "Machine Learning",
-  "Artificial Intelligence",
-  "Computer Networks",
-  "Cyber Security",
-  "Data Structures and Algorithms",
-];
 
 const skillSchema = new mongoose.Schema({
-  skillName: {
-    type: String,
-    required: true,
-  },
+  skillName: { type: String, required: true, trim: true },
   skillLevel: {
     type: String,
-    enum: ["Beginner", "Intermediate", "Advanced"],
+    enum: ["Beginner", "Intermediate", "Advanced", "Expert"],
+    default: "Beginner",
   },
 });
 
 const availabilitySchema = new mongoose.Schema({
-  slot: {
-    type: String,
-    required: true,
-  },
+  slot: { type: String, required: true },
   bookingStatus: {
     type: String,
     enum: ["Available", "Booked"],
@@ -45,26 +26,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
     },
+    name: { type: String, required: true, trim: true },
+    password: { type: String, required: true },
+    refreshToken: { type: String },
+    bio: { type: String, default: "" },
+    profilePhoto: { type: String, default: "" },
 
-    name: {
-      type: String,
-      required: true,
-    },
+    teachingSkills: { type: [skillSchema], default: [], index: true },
+    learningSkills: { type: [skillSchema], default: [] },
 
-    password: {
-      type: String,
-      required: true,
-    },
-    teachingSkills: [skillSchema],
-
-    learningSkills: [skillSchema],
-    bio: {
-      type: String,
-    },
-    profilePhoto: {
-      type: String,
-    },
     skillLevel: {
       type: String,
       enum: [
@@ -79,50 +53,49 @@ const userSchema = new mongoose.Schema(
       default: "Code Spark",
     },
 
-    skillCredits: {
-      type: Number,
-      default: 0,
-    },
+    skillCredits: { type: Number, default: 200 },
+    reputationScore: { type: Number, default: 0, min: 0, max: 5 },
+    totalReviews: { type: Number, default: 0 },
+
+    isAdmin: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
 
     availability: [availabilitySchema],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
+// ----- Hooks -----
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
-  this.password = await bcrypt.hash(this.password, 10);
+  this.password = await bcrypt.hash(this.password, 12);
 });
 
-userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(password, this.password);
+// ----- Methods -----
+userSchema.methods.isPasswordCorrect = function (password) {
+  return bcrypt.compare(password, this.password);
 };
 
 userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
-    {
-      _id: this._id,
-      email: this.email,
-    },
+    { _id: this._id, email: this.email, isAdmin: this.isAdmin },
     process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-    },
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRY || "1d" }
   );
 };
 
 userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
-    {
-      _id: this._id,
-    },
+    { _id: this._id },
     process.env.REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
-    },
+    { expiresIn: process.env.REFRESH_TOKEN_EXPIRY || "10d" }
   );
 };
 
-const userModel = mongoose.model("User", userSchema);
+// ----- Indexes -----
+userSchema.index({ "teachingSkills.skillName": 1 });
+userSchema.index({ "learningSkills.skillName": 1 });
+userSchema.index({ reputationScore: -1 });
 
+const userModel = mongoose.model("User", userSchema);
 export default userModel;

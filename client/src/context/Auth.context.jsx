@@ -1,27 +1,46 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { checkLoggedIn } from "../utils/checkLoggedIn";
-const AuthContext = createContext();
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { authService } from "../services/auth.service.js";
+
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    async function fetchLoggedInUser() {
-      try {
-        const res = await checkLoggedIn();
-        setLoggedInUser(res)
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchLoggedInUser();
+    authService
+      .getMe()
+      .then((res) => setUser(res.data))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await authService.logout();
+    } catch {}
+    setUser(null);
+    window.location.href = "/";
+  }, []);
+
+  const refreshUser = useCallback(async () => {
+    try {
+      const res = await authService.getMe();
+      setUser(res.data);
+    } catch {
+      setUser(null);
+    }
+  }, []);
+
   return (
-    <>
-      <AuthContext.Provider value={{ loggedInUser, setLoggedInUser }}>
-        {children}
-      </AuthContext.Provider>
-    </>
+    <AuthContext.Provider value={{ user, setUser, logout, refreshUser, loading }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used inside AuthProvider");
+  return ctx;
+};

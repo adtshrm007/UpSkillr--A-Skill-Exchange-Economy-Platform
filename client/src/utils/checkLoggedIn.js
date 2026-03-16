@@ -3,7 +3,7 @@ import axios from "axios";
 export const checkLoggedIn = async () => {
   try {
     const response = await axios.get(
-      "http://localhost:3000/user/checkLoggedIn",
+      "http://localhost:5000/user/checkLoggedIn",
       {
         withCredentials: true,
       },

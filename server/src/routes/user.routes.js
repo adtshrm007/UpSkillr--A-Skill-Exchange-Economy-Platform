@@ -1,16 +1,23 @@
 import express from "express";
-const router = express.Router();
 import {
   registerUser,
   loginUser,
-  getDashboard,
+  logoutUser,
   getMe,
-  updateProfile
+  getDashboard,
+  updateProfile,
+  checkLoggedIn,
 } from "../controllers/user.controller.js";
 import { verifyAccessToken } from "../middleware/authVerify.js";
+
+const router = express.Router();
+
 router.post("/register", registerUser);
 router.post("/login", loginUser);
+router.post("/logout", verifyAccessToken, logoutUser);
+router.get("/me", verifyAccessToken, getMe);
 router.get("/dashboard", verifyAccessToken, getDashboard);
-router.get("/checkLoggedIn", verifyAccessToken, getMe);
-router.put("/update",verifyAccessToken,updateProfile);
+router.get("/checkLoggedIn", verifyAccessToken, checkLoggedIn);
+router.put("/update", verifyAccessToken, updateProfile);
+
 export default router;

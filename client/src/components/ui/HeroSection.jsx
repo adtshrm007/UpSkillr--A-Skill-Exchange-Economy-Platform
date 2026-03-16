@@ -6,9 +6,17 @@ import image4 from "../../assets/imag4.svg";
 import image5 from "../../assets/image5.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/Auth.context";
+import { useState } from "react";
+import { useEffect } from "react";
 
 const HeroSection = () => {
+  const [name, setName] = useState("");
   const { loggedInUser } = useAuth();
+  useEffect(() => {
+    if (loggedInUser) {
+      setName(loggedInUser);
+    }
+  }, [loggedInUser]);
   return (
     <div className="flex flex-col min-h-screen w-full bg-[#0A0A0A] font-mono text-gray-100 overflow-x-clip">
       {/* 1. FIXED HEADER */}
@@ -34,7 +42,7 @@ const HeroSection = () => {
           </div>
           <Link to="/login">
             <div className="text-[#FF7849] bg-[#FF7849]/10 border border-[#FF7849]/20 px-6 py-2 rounded-full hover:bg-[#FF7849] hover:text-black transition-all">
-              {loggedInUser}
+              {loggedInUser?loggedInUser:"Login"}
             </div>
           </Link>
         </nav>
