@@ -59,12 +59,10 @@ export default function AdminDashboard() {
           </header>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Users" value={stats?.totalUsers} accent="#4F86C6" />
             <StatCard label="Sessions" value={stats?.totalSessions} accent="#FF7849" />
             <StatCard label="Completed" value={stats?.completedSessions} accent="#4F86C6" />
-            <StatCard label="Swaps" value={stats?.totalSwaps} accent="#FF7849" />
-            <StatCard label="Swaps Done" value={stats?.completedSwaps} accent="#4F86C6" />
             <StatCard label="Credits XP" value={stats?.creditsInCirculation} accent="#FF7849" />
           </div>
 

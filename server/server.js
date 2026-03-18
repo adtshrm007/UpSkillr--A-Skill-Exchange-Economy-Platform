@@ -13,12 +13,16 @@ import { connectDB } from "./src/utils/connectDB.js";
 import userRouter from "./src/routes/user.routes.js";
 import matchesRouter from "./src/routes/matches.route.js";
 import sessionRouter from "./src/routes/session.routes.js";
-import swapRouter from "./src/routes/swap.routes.js";
+
 import reviewRouter from "./src/routes/review.routes.js";
 import notificationRouter from "./src/routes/notification.routes.js";
 import creditsRouter from "./src/routes/credits.routes.js";
 import adminRouter from "./src/routes/admin.routes.js";
 import coursesRouter from "./src/routes/courses.routes.js";
+import chatRouter from "./src/routes/chat.routes.js";
+
+import ChatMessage from "./src/models/chatMessage.model.js";
+import Session from "./src/models/session.model.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -47,11 +51,90 @@ io.on("connection", (socket) => {
     socket.join(roomId);
   });
 
-  socket.on("send_message", (data) => {
+  socket.on("send_message", async (data) => {
+    // Persist message to DB
+    try {
+      await ChatMessage.create({
+        session: data.roomId,
+        sender: data.senderId,
+        senderName: data.senderName,
+        message: data.message,
+        timestamp: data.timestamp || new Date(),
+      });
+    } catch (err) {
+      console.error("[socket:send_message] Failed to save:", err.message);
+    }
     io.to(data.roomId).emit("receive_message", data);
   });
 
-  socket.on("disconnect", () => { });
+  // --- Call readiness tracking ---
+  // When a user clicks "Start Call", they signal readiness
+  socket.on("call_ready", async (data) => {
+    const { sessionId } = data;
+    const room = `call:${sessionId}`;
+    socket.join(room);
+
+    // Count how many unique sockets are in the call room
+    const sockets = await io.in(room).fetchSockets();
+    const uniqueUsers = new Set(sockets.map((s) => s.userId));
+
+    if (uniqueUsers.size >= 2) {
+      // Both users are ready — start the call timer on the server
+      try {
+        const session = await Session.findById(sessionId);
+        if (session && !session.callStartedAt) {
+          session.callStartedAt = new Date();
+          await session.save();
+        }
+      } catch (err) {
+        console.error("[socket:call_ready]", err.message);
+      }
+      // Notify both users the call is active
+      io.to(room).emit("call_active", { sessionId });
+    } else {
+      // Only one user ready, tell them to wait
+      socket.emit("call_waiting", { sessionId });
+    }
+  });
+
+  // When a user ends call or leaves
+  socket.on("call_leave", async (data) => {
+    const { sessionId } = data;
+    const room = `call:${sessionId}`;
+    socket.leave(room);
+
+    // Finalize duration on server
+    try {
+      const session = await Session.findById(sessionId);
+      if (session && session.callStartedAt) {
+        const elapsed = Math.round(
+          (Date.now() - session.callStartedAt.getTime()) / 60000
+        );
+        session.actualCallMinutes += elapsed;
+        session.callStartedAt = null;
+        await session.save();
+        // Notify remaining user
+        io.to(room).emit("call_paused", {
+          sessionId,
+          actualCallMinutes: session.actualCallMinutes,
+        });
+        io.to(sessionId).emit("call_duration_update", {
+          actualCallMinutes: session.actualCallMinutes,
+        });
+      }
+    } catch (err) {
+      console.error("[socket:call_leave]", err.message);
+    }
+  });
+
+  socket.on("webrtc_signal", (data) => {
+    socket.to(data.roomId).emit("webrtc_signal", data);
+  });
+
+  socket.on("disconnect", async () => {
+    // Auto-leave any call rooms on disconnect
+    // Socket.io auto-removes from rooms on disconnect, but we need to handle the call timer
+  });
 });
 
 // ---------- Core Middleware ----------
@@ -81,12 +164,13 @@ app.get("/", (_req, res) => res.json({ status: "ok", app: "UpSkillr API" }));
 app.use("/user", userRouter);
 app.use("/matches", matchesRouter);
 app.use("/sessions", sessionRouter);
-app.use("/swaps", swapRouter);
+
 app.use("/reviews", reviewRouter);
 app.use("/notifications", notificationRouter);
 app.use("/credits", creditsRouter);
 app.use("/admin", adminRouter);
 app.use("/courses", coursesRouter);
+app.use("/chat", chatRouter);
 
 // Global error handler
 app.use((err, _req, res, _next) => {
@@ -106,3 +190,4 @@ connectDB()
     console.error("❌ DB connection failed:", err.message);
     process.exit(1);
   });
+

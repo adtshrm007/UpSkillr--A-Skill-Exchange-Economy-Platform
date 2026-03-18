@@ -300,7 +300,10 @@ export default function DashboardPage() {
                         className="bg-white/3 p-5 rounded-2xl border border-white/5"
                       >
                         <div className="flex justify-between items-start mb-3">
-                          <h4 className="text-sm font-black">{s.skill}</h4>
+                          <h4 className="text-sm font-black">
+                            {s.requestedSkill}
+                            {s.offeredSkill && <span className="block text-[8px] text-green-400 mt-1 uppercase tracking-widest">Swap: {s.offeredSkill}</span>}
+                          </h4>
                           <span className="text-[10px] font-black text-[#4F86C6] bg-[#4F86C6]/10 px-2 py-0.5 rounded">
                             {s.status}
                           </span>
@@ -313,9 +316,16 @@ export default function DashboardPage() {
                             minute: "2-digit",
                           })}
                         </p>
-                        <p className="text-[10px] text-gray-600 mt-1">
-                          {s.durationHrs}hr · {s.creditCost} credits
-                        </p>
+                        <div className="flex justify-between items-center mt-2">
+                          <p className="text-[10px] text-gray-600">
+                            {s.durationHrs}hr · {s.creditCost} credits
+                          </p>
+                          {s.status === "Confirmed" && (
+                            <Link to={`/room/${s._id}`} className="text-[9px] font-bold text-[#4F86C6] hover:underline">
+                              Join Room →
+                            </Link>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>

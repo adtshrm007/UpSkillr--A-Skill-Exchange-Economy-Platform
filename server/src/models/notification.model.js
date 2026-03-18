@@ -11,10 +11,6 @@ const notificationSchema = new mongoose.Schema(
     type: {
       type: String,
       enum: [
-        "SWAP_REQUEST",
-        "SWAP_ACCEPTED",
-        "SWAP_CANCELLED",
-        "SWAP_COMPLETED",
         "SESSION_BOOKED",
         "SESSION_CANCELLED",
         "SESSION_COMPLETED",

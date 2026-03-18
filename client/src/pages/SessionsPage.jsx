@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useToast } from "../context/Toast.context.jsx";
+import { useAuth } from "../context/Auth.context.jsx";
 import { Link } from "react-router-dom";
+import NavBar from "../components/common/Navbar";
+import { sessionService } from "../services/session.service.js";
 
 const STATUS_COLORS = {
   Pending: "text-amber-400 bg-amber-400/10 border-amber-400/20",
@@ -45,7 +48,10 @@ function SessionCard({ session, onCancel, onComplete, userId }) {
     <div className="bg-white/2 border border-white/5 rounded-3xl p-6 hover:border-white/10 transition-all group">
       <div className="flex items-start justify-between mb-4">
         <div>
-          <h3 className="text-base font-black">{session.skill}</h3>
+          <h3 className="text-base font-black">
+            {session.requestedSkill}
+            {session.offeredSkill && <span className="ml-2 text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded-full uppercase tracking-widest">Swap: {session.offeredSkill}</span>}
+          </h3>
           <p className="text-gray-500 text-xs mt-1">{isTeacher ? "Teaching" : "Learning"} · {session.durationHrs}hr</p>
         </div>
         <span className={`text-[10px] font-black px-3 py-1 rounded-full border ${STATUS_COLORS[session.status] || "text-gray-400 bg-white/5 border-white/10"}`}>
@@ -75,7 +81,12 @@ function SessionCard({ session, onCancel, onComplete, userId }) {
         </div>
 
         {["Pending", "Confirmed"].includes(session.status) && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
+            {session.status === "Confirmed" && (
+              <Link to={`/room/${session._id}`} className="text-[10px] font-black bg-[#4F86C6]/20 border border-[#4F86C6]/30 text-[#4F86C6] px-3 py-1.5 rounded-xl hover:bg-[#4F86C6]/30 transition-all">
+                Join Room
+              </Link>
+            )}
             {isTeacher && session.status === "Confirmed" && (
               <button onClick={handleComplete} disabled={completing} className="text-[10px] font-black bg-green-500/20 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-xl hover:bg-green-500/30 transition-all disabled:opacity-50">
                 {completing ? "..." : "Complete"}
@@ -98,6 +109,7 @@ export default function SessionsPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const fetchSessions = async (f, p) => {
     setLoading(true);
@@ -171,7 +183,7 @@ export default function SessionsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {sessions.map((s) => (
-                <SessionCard key={s._id} session={s} onCancel={handleCancel} onComplete={handleComplete} />
+                <SessionCard key={s._id} session={s} onCancel={handleCancel} onComplete={handleComplete} userId={user?._id} />
               ))}
             </div>
           )}

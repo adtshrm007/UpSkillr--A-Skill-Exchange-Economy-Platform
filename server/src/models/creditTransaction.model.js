@@ -21,10 +21,6 @@ const creditTransactionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Session",
     },
-    relatedSwap: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "SwapRequest",
-    },
   },
   { timestamps: true }
 );

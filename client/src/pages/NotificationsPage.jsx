@@ -4,10 +4,6 @@ import { notificationService } from "../services/notification.service.js";
 import { useToast } from "../context/Toast.context.jsx";
 
 const TYPE_ICONS = {
-  SWAP_REQUEST: "⇄",
-  SWAP_ACCEPTED: "✓",
-  SWAP_CANCELLED: "✕",
-  SWAP_COMPLETED: "★",
   SESSION_BOOKED: "📅",
   SESSION_CANCELLED: "✕",
   SESSION_COMPLETED: "★",
@@ -17,10 +13,6 @@ const TYPE_ICONS = {
 };
 
 const TYPE_COLORS = {
-  SWAP_REQUEST: "text-amber-400",
-  SWAP_ACCEPTED: "text-green-400",
-  SWAP_CANCELLED: "text-red-400",
-  SWAP_COMPLETED: "text-purple-400",
   SESSION_BOOKED: "text-[#4F86C6]",
   SESSION_CANCELLED: "text-red-400",
   SESSION_COMPLETED: "text-green-400",

@@ -3,7 +3,6 @@ import { useParams, Link } from "react-router-dom";
 import NavBar from "../components/common/Navbar";
 import { authService } from "../services/auth.service.js";
 import { reviewService } from "../services/review.service.js";
-import { swapService } from "../services/swap.service.js";
 import { sessionService } from "../services/session.service.js";
 import { useAuth } from "../context/Auth.context.jsx";
 import { useToast } from "../context/Toast.context.jsx";
@@ -17,15 +16,12 @@ export default function PublicProfilePage() {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Swap State
-  const [showSwapForm, setShowSwapForm] = useState(false);
-  const [mySkill, setMySkill] = useState("");
-  const [theirSkill, setTheirSkill] = useState("");
-  const [sendingSwap, setSendingSwap] = useState(false);
+
 
   // Session State
   const [showSessionForm, setShowSessionForm] = useState(false);
   const [sessionSkill, setSessionSkill] = useState("");
+  const [offeredSkill, setOfferedSkill] = useState("");
   const [duration, setDuration] = useState(1);
   const [date, setDate] = useState("");
   const [booking, setBooking] = useState(false);
@@ -45,22 +41,7 @@ export default function PublicProfilePage() {
       .finally(() => setLoading(false));
   }, [id, toast]);
 
-  const handleSendSwap = async () => {
-    if (!mySkill || !theirSkill) {
-      toast({ message: "Select both skills", type: "error" });
-      return;
-    }
-    setSendingSwap(true);
-    try {
-      await swapService.request({ recipientId: profile._id, requesterSkill: mySkill, recipientSkill: theirSkill });
-      toast({ message: `Swap request sent to ${profile.name}!`, type: "success" });
-      setShowSwapForm(false);
-    } catch (e) {
-      toast({ message: e.response?.data?.message || "Failed to send swap", type: "error" });
-    } finally {
-      setSendingSwap(false);
-    }
-  };
+
 
   const handleBookSession = async () => {
     if (!sessionSkill || !date) {
@@ -71,7 +52,8 @@ export default function PublicProfilePage() {
     try {
       await sessionService.book({
         teacherId: profile._id,
-        skill: sessionSkill,
+        requestedSkill: sessionSkill,
+        offeredSkill,
         scheduledAt: date,
         durationHrs: duration,
       });
@@ -152,12 +134,6 @@ export default function PublicProfilePage() {
             {!isSelf && (
               <div className="w-full md:w-auto flex flex-col gap-3 shrink-0">
                 <button 
-                  onClick={() => setShowSwapForm(!showSwapForm)}
-                  className="w-full py-4 px-8 bg-[#FF7849] text-black font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-[#ff8f63] transition-all"
-                >
-                  Send Swap Request
-                </button>
-                <button 
                   onClick={() => setShowSessionForm(!showSessionForm)}
                   className="w-full py-4 px-8 bg-[#4F86C6] text-white font-black text-xs uppercase tracking-widest rounded-2xl flex-1 hover:bg-[#6a9fd4] transition-all"
                 >
@@ -167,47 +143,37 @@ export default function PublicProfilePage() {
             )}
           </header>
 
-          {/* Action Forms Area */}
-          {(showSwapForm || showSessionForm) && (
+          {showSessionForm && (
             <section className="bg-white/5 border border-white/10 rounded-3xl p-6 lg:p-8 animate-in fade-in slide-in-from-top-4 duration-500">
-              
-              {showSwapForm && (
-                <div className="space-y-4 max-w-xl">
-                  <h3 className="text-sm font-black text-[#FF7849] uppercase tracking-widest">Swap Request</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <input value={mySkill} onChange={e => setMySkill(e.target.value)} placeholder="You teach..." className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#FF7849]" />
-                    <input value={theirSkill} onChange={e => setTheirSkill(e.target.value)} placeholder="You learn..." className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#FF7849]" />
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={handleSendSwap} disabled={sendingSwap} className="px-6 py-2 bg-[#FF7849] text-black text-xs font-black rounded-lg hover:bg-opacity-80 disabled:opacity-50">
-                      {sendingSwap ? "Sending..." : "Confirm Request"}
-                    </button>
-                    <button onClick={() => setShowSwapForm(false)} className="px-6 py-2 bg-transparent text-white text-xs font-black rounded-lg hover:bg-white/5">Cancel</button>
-                  </div>
-                </div>
-              )}
+              <div className="space-y-4 max-w-xl">
+                <h3 className="text-sm font-black text-[#4F86C6] uppercase tracking-widest">
+                  Book Session {offeredSkill ? "(Mutual Swap - Free)" : `(Costs ${duration * 10} credits)`}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <select value={sessionSkill} onChange={e => setSessionSkill(e.target.value)} className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#4F86C6]">
+                    <option value="" disabled>I want to learn...</option>
+                    {profile.teachingSkills?.map((s, idx) => (
+                      <option key={idx} value={s.skillName}>{s.skillName}</option>
+                    ))}
+                  </select>
 
-              {showSessionForm && (
-                <div className="space-y-4 max-w-xl">
-                  <h3 className="text-sm font-black text-[#4F86C6] uppercase tracking-widest">Book Session (Costs 10 credits / hr)</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <select value={sessionSkill} onChange={e => setSessionSkill(e.target.value)} className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#4F86C6]">
-                      <option value="" disabled>Select skill...</option>
-                      {profile.teachingSkills?.map((s, idx) => (
-                        <option key={idx} value={s.skillName}>{s.skillName}</option>
-                      ))}
-                    </select>
-                    <input type="number" min="0.5" max="8" step="0.5" value={duration} onChange={e => setDuration(e.target.value)} className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#4F86C6]" title="Duration (Hrs)" />
-                    <input type="datetime-local" value={date} onChange={e => setDate(e.target.value)} className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#4F86C6]" />
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={handleBookSession} disabled={booking} className="px-6 py-2 bg-[#4F86C6] text-white text-xs font-black rounded-lg hover:bg-opacity-80 disabled:opacity-50">
-                      {booking ? "Booking..." : `Book for ${duration * 10} Credits`}
-                    </button>
-                    <button onClick={() => setShowSessionForm(false)} className="px-6 py-2 bg-transparent text-white text-xs font-black rounded-lg hover:bg-white/5">Cancel</button>
-                  </div>
+                  <select value={offeredSkill} onChange={e => setOfferedSkill(e.target.value)} className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#4F86C6]">
+                    <option value="">I can teach in return (Optional)...</option>
+                    {currentUser?.teachingSkills?.map((s, idx) => (
+                      <option key={idx} value={s.skillName}>{s.skillName}</option>
+                    ))}
+                  </select>
+
+                  <input type="number" min="0.5" max="8" step="0.5" value={duration} onChange={e => setDuration(e.target.value)} className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#4F86C6]" title="Duration (Hrs)" />
+                  <input type="datetime-local" value={date} onChange={e => setDate(e.target.value)} className="bg-[#161616] border border-white/10 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#4F86C6]" />
                 </div>
-              )}
+                <div className="flex gap-2 mt-4">
+                  <button onClick={handleBookSession} disabled={booking} className="px-6 py-2 bg-[#4F86C6] text-white text-xs font-black rounded-lg hover:bg-opacity-80 disabled:opacity-50">
+                    {booking ? "Booking..." : offeredSkill ? `Book Free Swap` : `Book for ${duration * 10} Credits`}
+                  </button>
+                  <button onClick={() => setShowSessionForm(false)} className="px-6 py-2 bg-transparent text-white text-xs font-black rounded-lg hover:bg-white/5">Cancel</button>
+                </div>
+              </div>
             </section>
           )}
 

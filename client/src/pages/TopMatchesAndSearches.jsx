@@ -2,31 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../components/common/Navbar";
 import { matchesService } from "../services/matches.service.js";
-import { swapService } from "../services/swap.service.js";
 import { useAuth } from "../context/Auth.context.jsx";
 import { useToast } from "../context/Toast.context.jsx";
 
-function MatchCard({ match, onSendSwap }) {
-  const [showSwapForm, setShowSwapForm] = useState(false);
-  const [mySkill, setMySkill] = useState("");
-  const [theirSkill, setTheirSkill] = useState("");
-  const [sending, setSending] = useState(false);
-  const { toast } = useToast();
-
-  const handleSendSwap = async () => {
-    if (!mySkill || !theirSkill) { toast({ message: "Select both skills.", type: "error" }); return; }
-    setSending(true);
-    try {
-      await onSendSwap({ recipientId: match._id, requesterSkill: mySkill, recipientSkill: theirSkill });
-      toast({ message: `Swap request sent to ${match.name}!`, type: "success" });
-      setShowSwapForm(false);
-    } catch (e) {
-      toast({ message: e.response?.data?.message || "Failed to send swap.", type: "error" });
-    } finally {
-      setSending(false);
-    }
-  };
-
+function MatchCard({ match }) {
   return (
     <div className="bg-white/2 border border-white/5 rounded-3xl p-6 hover:border-white/10 transition-all group flex flex-col gap-4">
       {/* User Info */}
@@ -70,39 +49,22 @@ function MatchCard({ match, onSendSwap }) {
           </div>
         </div>
       </div>
-      {/* Actions */}
-      {!showSwapForm ? (
-        <button
-          onClick={() => setShowSwapForm(true)}
-          className="w-full py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FF7849] hover:text-black hover:border-[#FF7849] transition-all"
+
+      {/* Actions — View Profile & Book Session */}
+      <div className="flex gap-3">
+        <Link
+          to={`/user/${match._id}`}
+          className="flex-1 py-3 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center hover:bg-white/10 hover:border-white/20 transition-all"
         >
-          Request Swap ⇄
-        </button>
-      ) : (
-        <div className="space-y-3 bg-white/3 rounded-2xl p-4">
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Swap Request</p>
-          <input
-            placeholder="Skill you'll teach..."
-            value={mySkill}
-            onChange={(e) => setMySkill(e.target.value)}
-            className="w-full bg-[#0F0F0F] border border-white/10 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#FF7849]"
-          />
-          <input
-            placeholder="Skill you want from them..."
-            value={theirSkill}
-            onChange={(e) => setTheirSkill(e.target.value)}
-            className="w-full bg-[#0F0F0F] border border-white/10 rounded-xl px-4 py-2.5 text-xs outline-none focus:border-[#4F86C6]"
-          />
-          <div className="flex gap-2">
-            <button onClick={handleSendSwap} disabled={sending} className="flex-1 py-2.5 bg-[#FF7849] text-black text-[10px] font-black rounded-xl hover:bg-[#ff8f63] disabled:opacity-50 transition-all">
-              {sending ? "Sending..." : "Send Request"}
-            </button>
-            <button onClick={() => setShowSwapForm(false)} className="px-4 py-2.5 bg-white/5 border border-white/10 text-[10px] font-black rounded-xl hover:bg-white/10 transition-all">
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+          View Profile
+        </Link>
+        <Link
+          to={`/user/${match._id}`}
+          className="flex-1 py-3 bg-[#4F86C6] text-white rounded-2xl text-[10px] font-black uppercase tracking-widest text-center hover:bg-[#6a9fd4] transition-all"
+        >
+          Book Session →
+        </Link>
+      </div>
     </div>
   );
 }
@@ -137,10 +99,6 @@ export default function TopMatchesAndSearches() {
     e.preventDefault();
     setPage(1);
     fetchMatches(search, 1);
-  };
-
-  const handleSendSwap = async (data) => {
-    await swapService.request(data);
   };
 
   return (
@@ -200,7 +158,7 @@ export default function TopMatchesAndSearches() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
               {matches.map((m) => (
-                <MatchCard key={m._id} match={m} onSendSwap={handleSendSwap} />
+                <MatchCard key={m._id} match={m} />
               ))}
             </div>
           )}

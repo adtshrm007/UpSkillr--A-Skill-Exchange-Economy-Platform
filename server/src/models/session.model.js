@@ -14,7 +14,8 @@ const sessionSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    skill: { type: String, required: true, trim: true },
+    requestedSkill: { type: String, required: true, trim: true },
+    offeredSkill: { type: String, default: "", trim: true },
     scheduledAt: { type: Date, required: true },
     durationHrs: { type: Number, default: 1, min: 0.5, max: 8 },
     status: {
@@ -28,6 +29,8 @@ const sessionSchema = new mongoose.Schema(
     cancelledBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     cancelReason: { type: String },
     completedAt: { type: Date },
+    callStartedAt: { type: Date, default: null },
+    actualCallMinutes: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

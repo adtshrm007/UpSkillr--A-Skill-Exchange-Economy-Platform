@@ -1,6 +1,5 @@
 import userModel from "../models/user.model.js";
 import Session from "../models/session.model.js";
-import SwapRequest from "../models/swapRequest.model.js";
 import CreditTransaction from "../models/creditTransaction.model.js";
 
 // Admin-only middleware check
@@ -57,15 +56,11 @@ export const getPlatformStats = async (req, res) => {
       totalUsers,
       totalSessions,
       completedSessions,
-      totalSwaps,
-      completedSwaps,
       creditsInCirculation,
     ] = await Promise.all([
       userModel.countDocuments(),
       Session.countDocuments(),
       Session.countDocuments({ status: "Completed" }),
-      SwapRequest.countDocuments(),
-      SwapRequest.countDocuments({ status: "Completed" }),
       userModel.aggregate([{ $group: { _id: null, total: { $sum: "$skillCredits" } } }]),
     ]);
 
@@ -73,8 +68,6 @@ export const getPlatformStats = async (req, res) => {
       totalUsers,
       totalSessions,
       completedSessions,
-      totalSwaps,
-      completedSwaps,
       creditsInCirculation: creditsInCirculation[0]?.total || 0,
     });
   } catch (error) {
