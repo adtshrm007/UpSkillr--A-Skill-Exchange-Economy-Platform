@@ -36,7 +36,7 @@ export const findMatches = async (req, res) => {
 
     const candidates = await userModel
       .find(query)
-      .select("name email bio profilePhoto teachingSkills learningSkills reputationScore totalReviews skillCredits")
+      .select("name email bio profilePhoto teachingSkills learningSkills reputationScore totalReviews skillCredits availability")
       .skip(skip)
       .limit(parseInt(limit))
       .lean();
@@ -50,9 +50,17 @@ export const findMatches = async (req, res) => {
       const iCanTeach = myTeaching.filter((s) => theirLearning.includes(s)).length;
       const total = myLearning.length + myTeaching.length;
 
-      const compatScore = total > 0 ? Math.round(((canTeachMe + iCanTeach) / (total * 2)) * 100) : 0;
+      const hasAvailability = c.availability && c.availability.some(a => a.status === "Available");
+      const baseCompat = total > 0 ? Math.round(((canTeachMe + iCanTeach) / (total * 2)) * 100) : 0;
+      
+      let enhancedScore = baseCompat;
+      if (baseCompat > 0) {
+        const repBonus = (c.reputationScore || 0) * 2; // max +10
+        const availBonus = hasAvailability ? 10 : 0; // max +10
+        enhancedScore = Math.min(100, baseCompat + repBonus + availBonus);
+      }
 
-      return { ...c, compatibilityScore: compatScore };
+      return { ...c, compatibilityScore: enhancedScore };
     }).sort((a, b) => b.compatibilityScore - a.compatibilityScore || b.reputationScore - a.reputationScore);
 
     const total = await userModel.countDocuments(query);

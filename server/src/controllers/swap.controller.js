@@ -135,6 +135,18 @@ export const completeSwap = async (req, res) => {
     swap.completedAt = new Date();
     await swap.save();
 
+    // Update stats for both users (assuming 1 hr per swap)
+    const requester = await userModel.findById(swap.requester);
+    const recipient = await userModel.findById(swap.recipient);
+    
+    requester.totalSessionsCompleted += 1;
+    requester.totalHoursTaught += 1;
+    await requester.save({ validateBeforeSave: false });
+
+    recipient.totalSessionsCompleted += 1;
+    recipient.totalHoursTaught += 1;
+    await recipient.save({ validateBeforeSave: false });
+
     const otherId = swap.requester.equals(req.user._id) ? swap.recipient : swap.requester;
     await pushNotification(otherId, "SWAP_COMPLETED", `Your skill swap is complete! Leave a review.`, { swapId: swap._id });
     await pushNotification(req.user._id, "SWAP_COMPLETED", `Your skill swap is complete! Leave a review.`, { swapId: swap._id });

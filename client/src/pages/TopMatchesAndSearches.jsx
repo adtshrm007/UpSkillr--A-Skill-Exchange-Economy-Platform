@@ -36,7 +36,7 @@ function MatchCard({ match, onSendSwap }) {
             {match.name?.charAt(0)}
           </div>
           <div>
-            <p className="font-black text-base group-hover:text-[#4F86C6] transition-colors">{match.name}</p>
+            <Link to={`/user/${match._id}`} className="font-black text-base group-hover:text-[#4F86C6] transition-colors">{match.name}</Link>
             <p className="text-[10px] text-gray-600">{match.email}</p>
             {match.reputationScore > 0 && (
               <p className="text-[10px] text-[#FF7849] font-black mt-0.5">★ {match.reputationScore} ({match.totalReviews} reviews)</p>

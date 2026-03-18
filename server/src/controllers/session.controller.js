@@ -174,11 +174,13 @@ export const completeSession = async (req, res) => {
     session.completedAt = new Date();
     await session.save();
 
-    // Award teacher credits
+    // Award teacher credits and update stats
     const teacher = await userModel.findById(session.teacher);
     const teacherBefore = teacher.skillCredits;
     const earned = session.creditCost;
     teacher.skillCredits += earned;
+    teacher.totalSessionsCompleted += 1;
+    teacher.totalHoursTaught += session.durationHrs;
     await teacher.save({ validateBeforeSave: false });
 
     await CreditTransaction.create({
@@ -193,7 +195,11 @@ export const completeSession = async (req, res) => {
 
     io.to(`user:${teacher._id.toString()}`).emit("credits:changed", { balance: teacher.skillCredits, change: earned });
 
-    // Notify learner to leave review
+    // Notify learner to leave review and update learner stats
+    const learner = await userModel.findById(session.learner);
+    learner.totalSessionsCompleted += 1;
+    await learner.save({ validateBeforeSave: false });
+    
     await pushNotification(session.learner, "SESSION_COMPLETED", `Your session "${session.skill}" is complete! Please leave a review.`, { sessionId: session._id });
 
     return res.status(200).json({ message: "Session completed", earned, session });

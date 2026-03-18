@@ -12,8 +12,11 @@ const skillSchema = new mongoose.Schema({
 });
 
 const availabilitySchema = new mongoose.Schema({
-  slot: { type: String, required: true },
-  bookingStatus: {
+  dayOfWeek: { type: String, enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"] },
+  startTime: { type: String }, // e.g. "09:00"
+  endTime: { type: String }, // e.g. "17:00"
+  slot: { type: String, required: true }, // Backup for exact dates or specific identifiers
+  status: {
     type: String,
     enum: ["Available", "Booked"],
     default: "Available",
@@ -56,6 +59,8 @@ const userSchema = new mongoose.Schema(
     skillCredits: { type: Number, default: 200 },
     reputationScore: { type: Number, default: 0, min: 0, max: 5 },
     totalReviews: { type: Number, default: 0 },
+    totalSessionsCompleted: { type: Number, default: 0 },
+    totalHoursTaught: { type: Number, default: 0 },
 
     isAdmin: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
@@ -96,6 +101,9 @@ userSchema.methods.generateRefreshToken = function () {
 userSchema.index({ "teachingSkills.skillName": 1 });
 userSchema.index({ "learningSkills.skillName": 1 });
 userSchema.index({ reputationScore: -1 });
+
+userSchema.index({ "teachingSkills.skillName": 1, isActive: 1 });
+userSchema.index({ "learningSkills.skillName": 1, isActive: 1 });
 
 const userModel = mongoose.model("User", userSchema);
 export default userModel;

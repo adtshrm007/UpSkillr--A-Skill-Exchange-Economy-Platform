@@ -18,6 +18,7 @@ import reviewRouter from "./src/routes/review.routes.js";
 import notificationRouter from "./src/routes/notification.routes.js";
 import creditsRouter from "./src/routes/credits.routes.js";
 import adminRouter from "./src/routes/admin.routes.js";
+import coursesRouter from "./src/routes/courses.routes.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -41,6 +42,15 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   socket.join(`user:${socket.userId}`);
+  
+  socket.on("join_room", (roomId) => {
+    socket.join(roomId);
+  });
+
+  socket.on("send_message", (data) => {
+    io.to(data.roomId).emit("receive_message", data);
+  });
+
   socket.on("disconnect", () => { });
 });
 
@@ -76,6 +86,7 @@ app.use("/reviews", reviewRouter);
 app.use("/notifications", notificationRouter);
 app.use("/credits", creditsRouter);
 app.use("/admin", adminRouter);
+app.use("/courses", coursesRouter);
 
 // Global error handler
 app.use((err, _req, res, _next) => {

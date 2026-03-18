@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import NavBar from "../components/common/Navbar";
-import { sessionService } from "../services/session.service.js";
 import { useToast } from "../context/Toast.context.jsx";
+import { Link } from "react-router-dom";
 
 const STATUS_COLORS = {
   Pending: "text-amber-400 bg-amber-400/10 border-amber-400/20",

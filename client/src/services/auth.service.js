@@ -8,4 +8,5 @@ export const authService = {
   getDashboard: () => api.get("/user/dashboard"),
   updateProfile: (data) => api.put("/user/update", data),
   checkLoggedIn: () => api.get("/user/checkLoggedIn"),
+  getPublicProfile: (id) => api.get(`/user/profile/${id}`),
 };

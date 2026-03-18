@@ -67,15 +67,13 @@ export const loginUser = async (req, res) => {
     res.cookie("accessToken", accessToken, { ...cookieOptions, maxAge: 24 * 60 * 60 * 1000 });
     res.cookie("refreshToken", refreshToken, { ...cookieOptions, maxAge: 10 * 24 * 60 * 60 * 1000 });
 
+    const userObj = user.toObject();
+    delete userObj.password;
+    delete userObj.refreshToken;
+
     return res.status(200).json({
       message: "Login successful",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        skillCredits: user.skillCredits,
-        isAdmin: user.isAdmin,
-      },
+      user: userObj,
     });
   } catch (error) {
     console.error("[loginUser]", error);
@@ -175,6 +173,21 @@ export const checkLoggedIn = async (req, res) => {
       .select("-password -refreshToken");
     return res.status(200).json(user);
   } catch (error) {
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// GET /user/profile/:id
+export const getPublicProfile = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.params.id)
+      .select("-password -refreshToken -isAdmin -email");
+    
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("[getPublicProfile]", error);
     return res.status(500).json({ message: "Server Error" });
   }
 };

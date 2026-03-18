@@ -31,7 +31,6 @@ const reviewSchema = new mongoose.Schema(
 // One review per reviewer per session
 reviewSchema.index({ reviewer: 1, session: 1 }, { unique: true, sparse: true });
 reviewSchema.index({ reviewer: 1, swapRequest: 1 }, { unique: true, sparse: true });
-reviewSchema.index({ reviewee: 1 });
 
 const Review = mongoose.model("Review", reviewSchema);
 export default Review;
