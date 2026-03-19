@@ -17,6 +17,7 @@ const reviewSchema = new mongoose.Schema(
     session: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Session",
+      required: true,
     },
     rating: { type: Number, required: true, min: 1, max: 5 },
     comment: { type: String, default: "", maxlength: 500 },
@@ -25,7 +26,7 @@ const reviewSchema = new mongoose.Schema(
 );
 
 // One review per reviewer per session
-reviewSchema.index({ reviewer: 1, session: 1 }, { unique: true, sparse: true });
+reviewSchema.index({ session: 1, reviewer: 1 }, { unique: true });
 
 const Review = mongoose.model("Review", reviewSchema);
 export default Review;

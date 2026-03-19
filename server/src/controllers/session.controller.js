@@ -4,6 +4,8 @@ import CreditTransaction from "../models/creditTransaction.model.js";
 import Notification from "../models/notification.model.js";
 import { getIO } from "../utils/socket.js";
 import { checkAndApplyLevelUp } from "../utils/skillLevelCheck.js";
+import Analytics from "../models/analytics.model.js";
+
 
 const CREDITS_PER_HOUR = 10;
 
@@ -263,7 +265,23 @@ export const completeSession = async (req, res) => {
     // Emit socket event to the call room so both users instantly see the review prompt
     getIO().to(`call:${session._id.toString()}`).emit("session_completed", { sessionId: session._id });
 
+    // Update Analytics for both participants
+    const today = new Date().toISOString().split("T")[0];
+    const minutes = session.actualCallMinutes || 0;
+    
+    await Analytics.findOneAndUpdate(
+      { userId: session.teacher, date: today },
+      { $inc: { sessionMinutes: minutes } },
+      { upsert: true }
+    );
+    await Analytics.findOneAndUpdate(
+      { userId: session.learner, date: today },
+      { $inc: { sessionMinutes: minutes } },
+      { upsert: true }
+    );
+
     return res.status(200).json({ message: "Session completed", earned, actualMinutes: session.actualCallMinutes, session });
+
   } catch (error) {
     console.error("[completeSession]", error);
     return res.status(500).json({ message: "Server Error" });

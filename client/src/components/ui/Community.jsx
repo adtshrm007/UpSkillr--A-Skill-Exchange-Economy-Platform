@@ -11,7 +11,7 @@ export default function Community() {
       <div className="w-full lg:w-1/2 flex flex-col gap-8 relative z-10">
         <header className="space-y-4">
           <h2 className="font-rose text-5xl md:text-7xl lg:text-8xl text-[#4F86C6] tracking-tighter uppercase leading-[0.9]">
-            Community
+            The Direct Swap
           </h2>
           <div className="space-y-1">
             <p className="font-rose text-3xl md:text-4xl lg:text-5xl text-white">
@@ -29,35 +29,35 @@ export default function Community() {
 
         <div className="space-y-6 max-w-lg">
           <p className="text-lg md:text-xl text-gray-400 font-mono leading-relaxed">
-            UpSkillr is built around people, not profiles. A global community
-            where learners and teachers meet as equals — sharing time,
-            knowledge, and experience.
+            Have a skill someone needs? See a skill you want to learn? Propose a
+            direct Skill Swap. Zero credits exchanged, infinite value gained.
+            It's mutual growth without the transaction.
           </p>
 
           {/* Value Props Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl transition-all hover:border-[#FF7849]/30">
               <p className="font-mono text-xs uppercase tracking-widest text-[#FF7849] font-black mb-2">
-                No Competition
+                Live Video Rooms
               </p>
               <p className="text-[10px] text-gray-500 uppercase leading-relaxed font-bold">
-                Focus on shared growth rather than rankings.
+                Connect instantly with built-in video and real-time chat.
               </p>
             </div>
             <div className="bg-white/5 border border-white/10 p-5 rounded-2xl transition-all hover:border-[#4F86C6]/30">
               <p className="font-mono text-xs uppercase tracking-widest text-[#4F86C6] font-black mb-2">
-                No Pressure
+                Build Reputation
               </p>
               <p className="text-[10px] text-gray-500 uppercase leading-relaxed font-bold">
-                Learn at your own pace with real partners.
+                Turn your knowledge into reputation with verified reviews.
               </p>
             </div>
           </div>
 
           <p className="text-lg md:text-xl font-mono text-white/80 leading-relaxed pt-4 border-t border-white/5">
-            Just a space where{" "}
-            <span className="text-[#4F86C6] font-bold">curiosity</span> connects{" "}
-            <span className="text-[#FF7849] font-bold">people</span>.
+            Experience the purest form of{" "}
+            <span className="text-[#4F86C6] font-bold">collaborative</span>{" "}
+            <span className="text-[#FF7849] font-bold">learning</span>.
           </p>
         </div>
       </div>

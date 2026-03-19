@@ -56,8 +56,16 @@ export default function LearningRoom() {
   // Session completion
   const [completing, setCompleting] = useState(false);
 
-  // Review state
   const [hasReviewed, setHasReviewed] = useState(false);
+
+  useEffect(() => {
+    if (session && user) {
+      const currentUserId = user._id?.toString();
+      const hasRev = session.reviewedBy?.some(id => id.toString() === currentUserId);
+      setHasReviewed(hasRev || false);
+    }
+  }, [session, user]);
+
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
@@ -362,7 +370,6 @@ export default function LearningRoom() {
     setSubmittingReview(true);
     try {
       await reviewService.create({
-        revieweeId: partner._id,
         sessionId: id,
         rating,
         comment: reviewComment,
@@ -374,6 +381,7 @@ export default function LearningRoom() {
         toast({ message: "You have already reviewed this session.", type: "warning" });
         setHasReviewed(true);
       } else {
+
         toast({ message: err.response?.data?.message || "Failed to submit review.", type: "error" });
       }
     } finally {

@@ -4,6 +4,7 @@ import { useAuth } from "../context/Auth.context.jsx";
 import { Link } from "react-router-dom";
 import NavBar from "../components/common/Navbar";
 import { sessionService } from "../services/session.service.js";
+import { reviewService } from "../services/review.service.js";
 
 const STATUS_COLORS = {
   Pending: "text-amber-400 bg-amber-400/10 border-amber-400/20",
@@ -12,9 +13,14 @@ const STATUS_COLORS = {
   Cancelled: "text-red-400 bg-red-400/10 border-red-400/20",
 };
 
-function SessionCard({ session, onCancel, onComplete, userId }) {
-  const isTeacher = session.teacher?._id === userId || session.teacher === userId;
+function SessionCard({ session, onCancel, onComplete, onReviewClick, userId }) {
+  const currentUserId = userId?.toString();
+  const teacherId = (session.teacher?._id || session.teacher)?.toString();
+  const learnerId = (session.learner?._id || session.learner)?.toString();
+  
+  const isTeacher = teacherId === currentUserId;
   const other = isTeacher ? session.learner : session.teacher;
+
   const [cancelling, setCancelling] = useState(false);
   const [completing, setCompleting] = useState(false);
   const { toast } = useToast();
@@ -80,23 +86,32 @@ function SessionCard({ session, onCancel, onComplete, userId }) {
           <p className="text-[10px] text-gray-600 mt-0.5">{session.creditCost} credits</p>
         </div>
 
-        {["Pending", "Confirmed"].includes(session.status) && (
-          <div className="flex gap-2 items-center">
-            {session.status === "Confirmed" && (
-              <Link to={`/room/${session._id}`} className="text-[10px] font-black bg-[#4F86C6]/20 border border-[#4F86C6]/30 text-[#4F86C6] px-3 py-1.5 rounded-xl hover:bg-[#4F86C6]/30 transition-all">
-                Join Room
-              </Link>
-            )}
-            {isTeacher && session.status === "Confirmed" && (
-              <button onClick={handleComplete} disabled={completing} className="text-[10px] font-black bg-green-500/20 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-xl hover:bg-green-500/30 transition-all disabled:opacity-50">
-                {completing ? "..." : "Complete"}
+        <div className="flex gap-2 items-center">
+          {["Pending", "Confirmed"].includes(session.status) && (
+            <>
+              {session.status === "Confirmed" && (
+                <Link to={`/room/${session._id}`} className="text-[10px] font-black bg-[#4F86C6]/20 border border-[#4F86C6]/30 text-[#4F86C6] px-3 py-1.5 rounded-xl hover:bg-[#4F86C6]/30 transition-all">
+                  Join Room
+                </Link>
+              )}
+              {isTeacher && session.status === "Confirmed" && (
+                <button onClick={handleComplete} disabled={completing} className="text-[10px] font-black bg-green-500/20 border border-green-500/30 text-green-400 px-3 py-1.5 rounded-xl hover:bg-green-500/30 transition-all disabled:opacity-50">
+                  {completing ? "..." : "Complete"}
+                </button>
+              )}
+              <button onClick={handleCancel} disabled={cancelling} className="text-[10px] font-black bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1.5 rounded-xl hover:bg-red-500/20 transition-all disabled:opacity-50">
+                {cancelling ? "..." : "Cancel"}
               </button>
-            )}
-            <button onClick={handleCancel} disabled={cancelling} className="text-[10px] font-black bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1.5 rounded-xl hover:bg-red-500/20 transition-all disabled:opacity-50">
-              {cancelling ? "..." : "Cancel"}
+            </>
+          )}
+
+          {session.status === "Completed" && !session.reviewedBy?.some(id => id.toString() === currentUserId) && (
+            <button onClick={() => onReviewClick(session, other)} className="text-[10px] font-black bg-[#4F86C6]/20 border border-[#4F86C6]/30 text-[#4F86C6] px-3 py-1.5 rounded-xl hover:bg-[#4F86C6]/30 transition-all">
+              Leave Review
             </button>
-          </div>
-        )}
+          )}
+
+        </div>
       </div>
     </div>
   );
@@ -110,6 +125,14 @@ export default function SessionsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const { toast } = useToast();
   const { user } = useAuth();
+
+  // Review Modal State
+  const [reviewSession, setReviewSession] = useState(null);
+  const [reviewPartner, setReviewPartner] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
 
   const fetchSessions = async (f, p) => {
     setLoading(true);
@@ -136,6 +159,54 @@ export default function SessionsPage() {
   const handleComplete = async (id) => {
     await sessionService.complete(id);
     fetchSessions(filter, page);
+  };
+
+  const handleReviewClick = (session, partner) => {
+    setReviewSession(session);
+    setReviewPartner(partner);
+    setRating(0);
+    setHoverRating(0);
+    setReviewComment("");
+  };
+
+  const submitReview = async (e) => {
+    e.preventDefault();
+    if (rating === 0) return toast({ message: "Please select a rating.", type: "error" });
+    setSubmittingReview(true);
+    try {
+      await reviewService.create({
+        sessionId: reviewSession._id,
+        rating,
+        comment: reviewComment,
+      });
+      toast({ message: "Review submitted successfully!", type: "success" });
+      setSessions((prev) =>
+        prev.map((s) =>
+          s._id === reviewSession._id
+            ? { ...s, reviewedBy: [...(s.reviewedBy || []), user._id] }
+            : s
+        )
+      );
+      setReviewSession(null);
+    } catch (err) {
+      if (err.response?.status === 409) {
+        toast({ message: "You have already reviewed this session.", type: "warning" });
+        // Sync local state so button vanishes
+        setSessions((prev) =>
+          prev.map((s) =>
+            s._id === reviewSession._id
+              ? { ...s, reviewedBy: [...(s.reviewedBy || []), user._id] }
+              : s
+          )
+        );
+        setReviewSession(null);
+      } else {
+
+        toast({ message: err.response?.data?.message || "Failed to submit review.", type: "error" });
+      }
+    } finally {
+      setSubmittingReview(false);
+    }
   };
 
   const FILTERS = ["all", "Confirmed", "Pending", "Completed", "Cancelled"];
@@ -183,7 +254,7 @@ export default function SessionsPage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {sessions.map((s) => (
-                <SessionCard key={s._id} session={s} onCancel={handleCancel} onComplete={handleComplete} userId={user?._id} />
+                <SessionCard key={s._id} session={s} onCancel={handleCancel} onComplete={handleComplete} onReviewClick={handleReviewClick} userId={user?._id} />
               ))}
             </div>
           )}
@@ -198,6 +269,57 @@ export default function SessionsPage() {
           )}
         </div>
       </main>
+
+      {/* Review Modal */}
+      {reviewSession && reviewPartner && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setReviewSession(null)} />
+          <div className="relative w-full max-w-md bg-[#161616] p-8 rounded-3xl border border-white/10 shadow-2xl animate-in zoom-in-95 duration-200">
+            <h2 className="text-2xl font-black text-white mb-2">Leave a Review</h2>
+            <p className="text-sm text-gray-400 mb-6">How was your session with {reviewPartner.name}?</p>
+            
+            <form onSubmit={submitReview} className="flex flex-col gap-6">
+              <div className="flex justify-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className="text-4xl transition-all focus:outline-none focus:scale-110 active:scale-95"
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setRating(star)}
+                  >
+                    <span className={star <= (hoverRating || rating) ? "text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]" : "text-gray-600 hover:text-gray-500"}>★</span>
+                  </button>
+                ))}
+              </div>
+              <textarea
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="Write a brief review (optional)..."
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-4 text-sm text-white focus:border-[#4F86C6]/50 transition-all outline-none resize-none h-28 placeholder:text-gray-600"
+                maxLength={500}
+              />
+              <div className="flex gap-3 mt-2">
+                <button
+                  type="button"
+                  onClick={() => setReviewSession(null)}
+                  className="flex-1 py-3 bg-white/5 border border-white/10 text-gray-400 rounded-xl font-black hover:bg-white/10 hover:text-white transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={submittingReview || rating === 0}
+                  className="flex-1 py-3 bg-[#4F86C6] text-white rounded-xl font-black hover:bg-[#6a9fd4] transition-all disabled:opacity-50 shadow-lg shadow-[#4F86C6]/20"
+                >
+                  {submittingReview ? "..." : "Submit"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

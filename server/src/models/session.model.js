@@ -31,6 +31,7 @@ const sessionSchema = new mongoose.Schema(
     completedAt: { type: Date },
     callStartedAt: { type: Date, default: null },
     actualCallMinutes: { type: Number, default: 0 },
+    reviewedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

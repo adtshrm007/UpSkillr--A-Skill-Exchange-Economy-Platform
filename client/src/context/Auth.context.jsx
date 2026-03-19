@@ -1,5 +1,8 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { authService } from "../services/auth.service.js";
+import { analyticsService } from "../services/analytics.service.js";
+
+
 
 const AuthContext = createContext(null);
 
@@ -14,6 +17,22 @@ export const AuthProvider = ({ children }) => {
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);
+
+  // Periodic Activity Ping
+  useEffect(() => {
+    if (!user) return;
+    
+    // Initial ping
+    analyticsService.ping().catch(() => {});
+    
+    const interval = setInterval(() => {
+      analyticsService.ping().catch(() => {});
+    }, 60000); // every 60s
+
+    
+    return () => clearInterval(interval);
+  }, [user]);
+
 
   const logout = useCallback(async () => {
     try {

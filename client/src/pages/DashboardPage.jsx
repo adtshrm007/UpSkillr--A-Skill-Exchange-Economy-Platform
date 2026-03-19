@@ -4,6 +4,9 @@ import NavBar from "../components/common/Navbar";
 import { useAuth } from "../context/Auth.context.jsx";
 import { sessionService } from "../services/session.service.js";
 import { matchesService } from "../services/matches.service.js";
+import { analyticsService } from "../services/analytics.service.js";
+
+
 import {
   BarChart,
   Bar,
@@ -11,7 +14,9 @@ import {
   ResponsiveContainer,
   Cell,
   Tooltip,
+  Legend,
 } from "recharts";
+
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -27,6 +32,9 @@ export default function DashboardPage() {
   const [learningSkills, setLearningSkills] = useState([]);
   const [completedSessions, setCompletedSessions] = useState([]);
   const [chartFilter, setChartFilter] = useState("week");
+  const [analyticsData, setAnalyticsData] = useState([]);
+
+
 
   useEffect(() => {
     sessionService
@@ -45,61 +53,27 @@ export default function DashboardPage() {
       .getMy({ limit: 100, status: "Completed" })
       .then((r) => setCompletedSessions(r.data.sessions || []))
       .catch(() => setCompletedSessions([]));
+
+    analyticsService
+      .getWeekly()
+      .then((r) => setAnalyticsData(r.data.analytics || []))
+      .catch(() => setAnalyticsData([]));
   }, []);
 
+
+
   const chartData = useMemo(() => {
-    const now = new Date();
-    
-    if (chartFilter === "week") {
-      const currentDay = now.getDay() === 0 ? 7 : now.getDay();
-      const startOfCurrentWeek = new Date(now);
-      startOfCurrentWeek.setDate(now.getDate() - currentDay + 1);
-      startOfCurrentWeek.setHours(0, 0, 0, 0);
+    return analyticsData.map(item => {
+      const d = new Date(item.date);
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+      return {
+        day: dayName,
+        platform: item.platformHours,
+        session: item.sessionHours
+      };
+    });
+  }, [analyticsData]);
 
-      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-      const data = days.map(day => ({ day, hrs: 0 }));
-
-      completedSessions.forEach(session => {
-        if (!session.completedAt) return;
-        const d = new Date(session.completedAt);
-        if (d >= startOfCurrentWeek) {
-          const dayIndex = d.getDay() === 0 ? 6 : d.getDay() - 1;
-          if (dayIndex >= 0 && dayIndex < 7) {
-            data[dayIndex].hrs += session.durationHrs || 0;
-          }
-        }
-      });
-      return data;
-    } else {
-      const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      
-      const weeksData = [
-        { day: "Week 1", hrs: 0 },
-        { day: "Week 2", hrs: 0 },
-        { day: "Week 3", hrs: 0 },
-        { day: "Week 4", hrs: 0 },
-        { day: "Week 5", hrs: 0 }
-      ];
-
-      completedSessions.forEach(session => {
-        if (!session.completedAt) return;
-        const d = new Date(session.completedAt);
-        if (d >= startOfCurrentMonth && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-          const date = d.getDate();
-          const weekIndex = Math.floor((date - 1) / 7);
-          if (weekIndex >= 0 && weekIndex < 5) {
-            weeksData[weekIndex].hrs += session.durationHrs || 0;
-          }
-        }
-      });
-      
-      const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-      if (daysInMonth <= 28) {
-         weeksData.pop();
-      }
-      return weeksData;
-    }
-  }, [completedSessions, chartFilter]);
 
   useEffect(() => {
     if (user) {
@@ -373,17 +347,19 @@ export default function DashboardPage() {
                           border: "1px solid #333",
                           borderRadius: "12px",
                         }}
-                        itemStyle={{ color: "#fff", fontSize: "10px" }}
+                        itemStyle={{ fontSize: "10px" }}
+                        formatter={(value) => `${value.toFixed(1)}h`}
                       />
-                      <Bar dataKey="hrs" radius={[6, 6, 6, 6]}>
-                        {chartData.map((entry, i) => (
-                          <Cell
-                            key={i}
-                            fill={entry.hrs > 4 ? "#FF7849" : "#4F86C6"}
-                            fillOpacity={0.8}
-                          />
-                        ))}
-                      </Bar>
+                      <Legend 
+                        verticalAlign="top" 
+                        align="right" 
+                        iconType="circle"
+                        wrapperStyle={{ fontSize: '9px', paddingBottom: '20px', textTransform: 'uppercase', fontWeight: 'bold' }}
+                      />
+                      <Bar dataKey="platform" name="Platform Time" fill="#999" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="session" name="Session Time" fill="#FF7849" radius={[4, 4, 0, 0]} />
+
+                      
                       <XAxis
                         dataKey="day"
                         axisLine={false}
@@ -395,6 +371,7 @@ export default function DashboardPage() {
                         }}
                       />
                     </BarChart>
+
                   </ResponsiveContainer>
                 </div>
               </section>

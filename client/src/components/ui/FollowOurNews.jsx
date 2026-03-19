@@ -14,14 +14,15 @@ export default function FollowOurNews() {
         <div className="w-full lg:w-1/2 max-w-xl space-y-10">
           <header className="space-y-4">
             <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-tight">
-              Follow <br />
+              Stop <br />
               <span className="text-[#FF7849] drop-shadow-[0_0_15px_rgba(255,120,73,0.3)]">
-                Our News
+                Paying
               </span>
             </h2>
             <p className="text-gray-500 text-sm md:text-base leading-relaxed max-w-md">
-              Stay in the loop with the latest protocol updates, community
-              stories, and exclusive skill-swapping promotions.
+              Join a rapidly growing community of creators, engineers, and
+              founders trading knowledge. You're just 200 free credits away
+              from your first masterclass.
             </p>
           </header>
 
@@ -35,7 +36,7 @@ export default function FollowOurNews() {
               />
 
               <button className="bg-white text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#FF7849] hover:text-black transition-all duration-300 active:scale-95">
-                Subscribe
+                Join Now
               </button>
             </div>
             <p className="text-[9px] text-gray-600 uppercase tracking-widest mt-3 ml-2 font-bold italic">

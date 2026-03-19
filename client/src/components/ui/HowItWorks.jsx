@@ -34,35 +34,35 @@ export default function HowItWorks() {
           </h2>
           <div className="space-y-1">
             <p className="font-rose text-2xl md:text-3xl lg:text-4xl text-white">
-              Get{" "}
               <span className="text-[#FF7849] font-black italic">
-                Limitless.
-              </span>
+                Monetize
+              </span>{" "}
+              Your Expertise.
             </p>
             <p className="font-rose text-xl md:text-2xl lg:text-3xl text-[#868686]">
-              Get{" "}
               <span className="text-[#4F86C6] font-black italic">
-                Personalised Learning.
-              </span>
+                Learn Anything.
+              </span>{" "}
+              Zero Cost.
             </p>
           </div>
         </header>
 
         <div className="space-y-6 max-w-lg">
           <p className="text-lg md:text-xl text-gray-400 font-mono leading-relaxed">
-            UpSkillr works on a simple idea: connecting learners to Artificial
-            Intelligence and peers to enhance their learning experience.
+            UpSkillr works on a simple idea: bypassing the credit card. Build
+            your profile, find a match, and swap skills directly or use credits.
           </p>
 
           <div className="bg-white/5 border-l-2 border-[#FF7849] p-6 rounded-r-2xl space-y-4">
             <p className="text-sm md:text-base text-white font-mono leading-relaxed">
-              List the skills you can{" "}
+              Earn credits when you{" "}
               <span className="text-[#4F86C6] font-bold">teach</span>. <br />
-              Choose the courses you want to{" "}
+              Spend them when you{" "}
               <span className="text-[#FF7849] font-bold">learn</span>.
             </p>
             <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#FF7849] font-black">
-              We handle the match.
+              Start with 200 free credits.
             </p>
           </div>
         </div>

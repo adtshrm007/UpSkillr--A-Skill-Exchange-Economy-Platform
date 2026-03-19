@@ -20,6 +20,8 @@ import creditsRouter from "./src/routes/credits.routes.js";
 import adminRouter from "./src/routes/admin.routes.js";
 import coursesRouter from "./src/routes/courses.routes.js";
 import chatRouter from "./src/routes/chat.routes.js";
+import analyticsRouter from "./src/routes/analytics.routes.js";
+
 
 import ChatMessage from "./src/models/chatMessage.model.js";
 import Session from "./src/models/session.model.js";
@@ -171,6 +173,8 @@ app.use("/credits", creditsRouter);
 app.use("/admin", adminRouter);
 app.use("/courses", coursesRouter);
 app.use("/chat", chatRouter);
+app.use("/analytics", analyticsRouter);
+
 
 // Global error handler
 app.use((err, _req, res, _next) => {

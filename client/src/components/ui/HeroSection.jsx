@@ -62,30 +62,30 @@ const HeroSection = () => {
           <div className="space-y-8 max-w-xl">
             <div className="space-y-4">
               <h1 className="text-white text-5xl md:text-7xl font-rose leading-[1.1] tracking-tighter">
-                <span className="text-[#4F86C6]">Making</span>
+                <span className="text-[#4F86C6]">Swap</span>
                 <br />
                 <span className="text-white font-black drop-shadow-[0_0_20px_rgba(255,120,73,0.3)]">
-                  Learners
+                  Skills,
                 </span>
               </h1>
               <h1 className="text-white text-5xl md:text-7xl font-rose leading-[1.1] tracking-tighter">
                 <span className="text-[#FF7849] font-black drop-shadow-[0_0_20px_rgba(79,134,198,0.3)]">
-                  Limitless.
+                  Not Cash.
                 </span>
               </h1>
             </div>
 
             <p className="text-gray-500 text-sm md:text-lg leading-relaxed font-medium">
-              Limitless potential through{" "}
-              <span className="text-[#FF7849]">E-learning</span> with support of{" "}
-              <span className="text-[#4F86C6]">AI mentor</span> for personalised
-              mentorship.
+              UpSkillr is the premier skill economy where your knowledge is your
+              currency. Swap skills directly, earn credits by teaching, and
+              learn from verified peers in real-time. Start today with{" "}
+              <span className="text-[#FF7849]">200 free credits</span>.
             </p>
 
             <div className="inline-block pt-6">
               <button className="group bg-white text-black px-10 py-5 rounded-3xl flex items-center gap-6 transition-all hover:bg-gray-200 active:scale-95 shadow-2xl">
                 <span className="font-black text-sm uppercase tracking-widest">
-                  Explore Courses
+                  Start Learning for Free
                 </span>
                 <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center transition-transform group-hover:translate-x-2">
                   <svg
