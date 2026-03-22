@@ -294,7 +294,7 @@ export default function LearningRoom() {
       });
       return stream;
     } catch (err) {
-      toast({ message: "Camera/Mic access denied or unavailable.", type: "error" });
+      toast({ message: "Camera/Mic access denied or unavailable.", type: "error",err });
       return null;
     }
   };
