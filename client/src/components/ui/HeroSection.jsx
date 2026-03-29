@@ -42,7 +42,7 @@ const HeroSection = () => {
               Community
             </p>
           </div>
-          <Link to="/login">
+          <Link to={user?"/dashboard":"/login"}>
             <div className="text-[#FF7849] bg-[#FF7849]/10 border border-[#FF7849]/20 px-6 py-2 rounded-full hover:bg-[#FF7849] hover:text-black transition-all">
               {user?name:"Login"}
             </div>

@@ -229,359 +229,153 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {/* SKILLS */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <section className="bg-white/2 border border-white/5 p-8 rounded-3xl hover:bg-white/4 transition-colors">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FF7849] mb-6 flex items-center gap-3">
-                    <span className="w-2 h-2 bg-[#FF7849] rounded-full animate-pulse" />{" "}
-                    Tech Stack
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {(teachingSkills || []).length === 0 ? (
-                      <Link
-                        to="/profile"
-                        className="text-xs text-gray-600 italic hover:text-white transition-colors"
-                      >
-                        Add tech skills on your profile →
-                      </Link>
-                    ) : (
-                      teachingSkills.map((s, i) => (
-                        <div
-                          key={i}
-                          className="bg-black/40 border border-white/10 px-4 py-2 rounded-xl flex items-center gap-3"
-                        >
-                          <span className="text-xs font-bold">
-                            {s.skillName}
-                          </span>
-                          <span className="text-[8px] bg-[#FF7849]/10 text-[#FF7849] px-2 py-0.5 rounded uppercase font-black">
-                            {s.skillLevel}
-                          </span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </section>
-
-                <section className="bg-white/2 border border-white/5 p-8 rounded-3xl hover:bg-white/4 transition-colors">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#4F86C6] mb-6 flex items-center gap-3">
-                    <span className="w-2 h-2 bg-[#4F86C6] rounded-full" />{" "}
-                    Learning Goals
-                  </h3>
-                  <div className="flex flex-wrap gap-3">
-                    {(learningSkills || []).length === 0 ? (
-                      <Link
-                        to="/profile"
-                        className="text-xs text-gray-600 italic hover:text-white transition-colors"
-                      >
-                        Add learning goals →
-                      </Link>
-                    ) : (
-                      learningSkills.map((s, i) => (
-                        <div
-                          key={i}
-                          className="bg-black/40 border border-white/10 px-4 py-2 rounded-xl text-xs font-bold text-gray-300"
-                        >
-                          {s.skillName}
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </section>
-              </div>
-
-              {/* UPCOMING SESSIONS */}
-              <section className="bg-gradient-to-br from-black to-white/5 border border-white/5 p-8 rounded-3xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF7849]/10 blur-[50px] rounded-full pointer-events-none"></div>
-                
-                <div className="flex justify-between items-center mb-8 relative z-10">
-                  <h3 className="text-xs font-black uppercase tracking-widest italic flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> Live & Upcoming
-                  </h3>
-                  <Link
-                    to="/sessions"
-                    className="text-[10px] text-gray-500 hover:text-white uppercase font-bold tracking-tighter"
-                  >
-                    View All →
-                  </Link>
-                </div>
-                {loadingSessions ? (
-                  <div className="flex gap-4">
-                    {[1, 2].map((i) => (
-                      <div
-                        key={i}
-                        className="flex-1 h-24 bg-white/3 rounded-2xl animate-pulse"
-                      />
-                    ))}
-                  </div>
-                ) : sessions.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-gray-600 text-xs italic">
-                      No learning sessions scheduled yet.
-                    </p>
-                    <Link
-                      to="/explore"
-                      className="text-[#4F86C6] text-xs font-bold hover:underline mt-2 block"
-                    >
-                      Find an engineering mentor →
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {sessions.map((s) => (
-                      <div
-                        key={s._id}
-                        className="group bg-[#161616] p-5 rounded-2xl border border-white/5 hover:border-[#4F86C6]/50 transition-colors shadow-xl"
-                      >
-                        <div className="flex justify-between items-start mb-3">
-                          <h4 className="text-sm font-black text-white group-hover:text-[#4F86C6] transition-colors">
-                            {s.requestedSkill} Session
-                            {s.offeredSkill && <span className="block text-[8px] text-green-400 mt-1 uppercase tracking-widest">Swap: {s.offeredSkill}</span>}
-                          </h4>
-                          <span className="text-[9px] font-black text-[#4F86C6] bg-[#4F86C6]/10 px-2 py-0.5 rounded uppercase">
-                            {s.status}
-                          </span>
-                        </div>
-                        <p className="text-[10px] text-gray-400 font-bold font-mono">
-                          {new Date(s.scheduledAt).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                        <div className="flex justify-between items-end mt-4">
-                          <div>
-                            <p className="text-[10px] text-gray-500 font-mono tracking-tighter uppercase font-bold">
-                              {s.durationHrs} hr <span className="mx-1">•</span> {s.creditCost} credits
-                            </p>
-                          </div>
-                          {s.status === "Confirmed" && (
-                            <Link to={`/room/${s._id}`} className="bg-green-500 text-black px-5 py-2 rounded-lg text-[10px] font-black uppercase hover:bg-green-400 transition-all shadow-[0_0_15px_rgba(34,197,94,0.4)] active:scale-95">
-                              Join
-                            </Link>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            </div>
-
-            {/* RIGHT COLUMN */}
-            <div className="lg:col-span-4 space-y-6">
-              {/* ACTIVITY CHART */}
-              <section className="bg-[#121212] border border-white/10 rounded-3xl p-8 relative overflow-hidden">
-                <div className="flex justify-between items-center mb-8">
-                  <h4 className="text-[10px] uppercase font-black tracking-[0.2em] text-gray-500">
-                    Activity ({chartFilter === "week" ? "This Week" : "This Month"})
-                  </h4>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setChartFilter("week")}
-                      className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full transition-colors ${
-                        chartFilter === "week"
-                          ? "bg-[#FF7849] text-black"
-                          : "bg-white/10 text-gray-400 hover:text-white"
-                      }`}
-                    >
-                      Week
-                    </button>
-                    <button
-                      onClick={() => setChartFilter("month")}
-                      className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full transition-colors ${
-                        chartFilter === "month"
-                          ? "bg-[#4F86C6] text-black"
-                          : "bg-white/10 text-gray-400 hover:text-white"
-                      }`}
-                    >
-                      Month
-                    </button>
-                  </div>
-                </div>
-                <div className="w-full h-48">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData}>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "#111",
-                          border: "1px solid #333",
-                          borderRadius: "12px",
-                        }}
-                        itemStyle={{ fontSize: "10px" }}
-                        formatter={(value) => `${value.toFixed(1)}h`}
-                      />
-                      <Legend 
-                        verticalAlign="top" 
-                        align="right" 
-                        iconType="circle"
-                        wrapperStyle={{ fontSize: '9px', paddingBottom: '20px', textTransform: 'uppercase', fontWeight: 'bold' }}
-                      />
-                      <Bar dataKey="platform" name="Platform Time" fill="#999" radius={[4, 4, 0, 0]} />
-                      <Bar dataKey="session" name="Session Time" fill="#FF7849" radius={[4, 4, 0, 0]} />
-
-                      
-                      <XAxis
-                        dataKey="day"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{
-                          fill: "#444",
-                          fontSize: 10,
-                          fontWeight: "bold",
-                        }}
-                      />
-                    </BarChart>
-
-                  </ResponsiveContainer>
-                </div>
-              </section>
-
-              {/* RECOMMENDED FOR YOU */}
-              <section className="bg-white/2 border border-white/5 rounded-3xl p-8 relative overflow-hidden">
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#4F86C6]/10 blur-[40px] rounded-full pointer-events-none"></div>
-                <div className="flex justify-between items-center mb-8 relative z-10">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#4F86C6]">
-                    Recommended For You
-                  </h4>
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_green]" />
-                </div>
-                
-                {/* Tech Trending Tag */}
-                <div className="mb-6 bg-white/5 border border-white/10 p-3 rounded-xl flex items-center justify-between">
-                   <p className="text-[9px] uppercase tracking-widest font-black text-gray-400">🔥 Trending Tech</p>
-                   <p className="text-[10px] font-black text-white">Full Stack Web</p>
-                </div>
-
-                <div className="space-y-4 relative z-10">
-                  {loadingMatches ? (
-                    [1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="h-14 bg-white/3 rounded-2xl animate-pulse"
-                      />
-                    ))
-                  ) : matches.length === 0 ? (
-                    <p className="text-gray-600 text-xs italic text-center py-4">
-                      Add tech skills to find matches.
-                    </p>
+            {/* TILE 5: TECH STACK & GOALS */}
+            <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-[#111] border border-white/5 p-6 rounded-[2rem] hover:bg-white/[0.02] transition-colors relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-24 h-24 bg-[#FF7849]/5 blur-[40px] rounded-full pointer-events-none" />
+                <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-[#FF7849] mb-4 flex items-center gap-2 relative z-10">
+                  <span className="w-1.5 h-1.5 bg-[#FF7849] rounded-full" /> TECH STACK
+                </h4>
+                <div className="flex flex-wrap gap-2 relative z-10">
+                  {(teachingSkills || []).length === 0 ? (
+                    <Link to="/profile" className="text-[10px] text-gray-600 italic hover:text-white transition-colors">Add skills →</Link>
                   ) : (
-                    <>
-                      <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mb-2">Suggested Mentors</p>
-                      {matches.slice(0, 2).map((m, i) => (
-                        <div
-                          key={m._id || i}
-                          className="p-4 rounded-2xl bg-white/3 border border-transparent hover:border-white/10 transition-all cursor-pointer group mb-2"
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-[#4F86C6]/20 rounded-full flex items-center justify-center text-[#4F86C6] font-black text-xs uppercase shadow-[0_0_15px_rgba(79,134,198,0.2)]">
-                              {m.name?.charAt(0)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-black group-hover:text-[#4F86C6] transition-colors truncate">
-                                {m.name}
-                              </p>
-                              <div className="flex gap-2 mt-1 flex-wrap">
-                                {m.teachingSkills?.slice(0, 2).map((sk, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="text-[7px] font-black text-gray-400 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded"
-                                  >
-                                    {sk.skillName}
-                                  </span>
-                                ))}
-                              </div>
-                            </div>
-                            <span className="text-[10px] font-black text-green-400">
-                              {m.compatibilityScore}%
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                      {matches.length > 2 && (
-                        <>
-                          <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mt-4 mb-2">Suggested Swaps</p>
-                          {matches.slice(2).map((m, i) => (
-                            <div
-                              key={m._id || i}
-                              className="p-4 rounded-2xl bg-white/3 border border-transparent hover:border-[#FF7849]/30 transition-all cursor-pointer group mb-2"
-                            >
-                              <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 bg-[#FF7849]/20 rounded-full flex items-center justify-center text-[#FF7849] font-black text-xs uppercase shadow-[0_0_15px_rgba(255,120,73,0.2)]">
-                                  {m.name?.charAt(0)}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-black group-hover:text-[#FF7849] transition-colors truncate">
-                                    {m.name}
-                                  </p>
-                                  <div className="flex gap-2 mt-1 flex-wrap">
-                                    {m.learningSkills?.slice(0, 2).map((sk, idx) => (
-                                      <span
-                                        key={idx}
-                                        className="text-[7px] font-black text-gray-400 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded"
-                                      >
-                                        Learns {sk.skillName}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </>
-                      )}
-                    </>
+                    teachingSkills.map((s, i) => (
+                      <div key={i} className="bg-black/40 border border-white/10 px-3 py-1.5 rounded-lg flex items-center gap-2 group/skill hover:border-[#FF7849]/30 transition-all">
+                        <span className="text-[10px] font-bold">{s.skillName}</span>
+                        <span className="text-[7px] bg-[#FF7849]/10 text-[#FF7849] px-1.5 py-0.5 rounded uppercase font-black">{s.skillLevel}</span>
+                      </div>
+                    ))
                   )}
                 </div>
-                <button
-                  onClick={() => navigate("/explore")}
-                  className="w-full mt-6 py-4 bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-gray-200 transition-all shadow-[0_10px_20px_-10px_rgba(255,255,255,0.2)] relative z-10"
-                >
-                  Explore Tech Community
-                </button>
-              </section>
+              </div>
 
-              {/* NETWORK / COMMUNITY */}
-              <section className="bg-gradient-to-tr from-[#161616] to-[#0F0F0F] border border-white/5 rounded-3xl p-8">
-                <div className="flex justify-between items-center mb-6">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Network & Community</h4>
-                  <div className="px-2 py-1 bg-green-500/20 rounded text-green-500 text-[8px] font-black uppercase tracking-widest">
-                    1.2k Active Now
-                  </div>
-                </div>
-
-                <div className="space-y-4 mb-8">
-                  <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mb-2">Joined Communities</p>
-                  
-                  <div className="group bg-white/5 border border-white/10 p-4 rounded-xl flex items-center justify-between hover:bg-white/10 transition-colors cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#FF7849]/20 flex items-center justify-center text-lg">⚡</div>
-                      <div>
-                        <p className="text-xs font-black text-white">Frontend Masters Cohort</p>
-                        <p className="text-[9px] font-mono text-gray-500">Live in 2 hrs</p>
+              <div className="bg-[#111] border border-white/5 p-6 rounded-[2rem] hover:bg-white/[0.02] transition-colors relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-24 h-24 bg-[#4F86C6]/5 blur-[40px] rounded-full pointer-events-none" />
+                <h4 className="text-[9px] font-black uppercase tracking-[0.3em] text-[#4F86C6] mb-4 flex items-center gap-2 relative z-10">
+                  <span className="w-1.5 h-1.5 bg-[#4F86C6] rounded-full" /> LEARNING GOALS
+                </h4>
+                <div className="flex flex-wrap gap-2 relative z-10">
+                  {(learningSkills || []).length === 0 ? (
+                    <Link to="/profile" className="text-[10px] text-gray-600 italic hover:text-white transition-colors">Add goals →</Link>
+                  ) : (
+                    learningSkills.map((s, i) => (
+                      <div key={i} className="bg-black/40 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold text-gray-300 hover:border-[#4F86C6]/30 transition-all">
+                        {s.skillName}
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="group bg-white/5 border border-white/10 p-4 rounded-xl flex items-center justify-between hover:bg-white/10 transition-colors cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg bg-[#4F86C6]/20 flex items-center justify-center text-lg">⚙️</div>
-                      <div>
-                        <p className="text-xs font-black text-white">System Design Discussions</p>
-                        <p className="text-[9px] font-mono text-gray-500">45 new messages</p>
-                      </div>
-                    </div>
-                  </div>
+                    ))
+                  )}
                 </div>
-
-                <Link
-                  to="/communities"
-                  className="block w-full text-center py-3 border border-white/20 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-black transition-all"
-                >
-                  Explore Communities
-                </Link>
-              </section>
+              </div>
             </div>
+
+            {/* TILE 6: LIVE & UPCOMING SESSIONS */}
+            <div className="lg:col-span-4 bg-gradient-to-b from-[#161616] to-[#0A0A0A] border border-white/5 rounded-[2.5rem] p-8 flex flex-col relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 blur-[50px] rounded-full pointer-events-none" />
+              <div className="flex justify-between items-center mb-6 relative z-10">
+                <h3 className="text-[9px] font-black uppercase tracking-widest italic flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> Live & Upcoming
+                </h3>
+                <Link to="/sessions" className="text-[9px] text-gray-500 hover:text-white uppercase font-bold tracking-tighter">View All →</Link>
+              </div>
+
+              <div className="flex-1 space-y-3 relative z-10">
+                {loadingSessions ? (
+                  <div className="space-y-3">
+                    {[1, 2].map((i) => <div key={i} className="h-20 bg-white/3 rounded-2xl animate-pulse" />)}
+                  </div>
+                ) : sessions.length === 0 ? (
+                  <div className="text-center py-6 border border-dashed border-white/10 rounded-2xl">
+                    <p className="text-gray-600 text-[10px] italic">No active sessions.</p>
+                    <Link to="/explore" className="text-[#4F86C6] text-[10px] font-bold hover:underline mt-1 block">Find mentor →</Link>
+                  </div>
+                ) : (
+                  sessions.map((s) => (
+                    <div key={s._id} className="group/session bg-black/40 p-4 rounded-2xl border border-white/5 hover:border-[#4F86C6]/50 transition-all">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="text-[11px] font-black text-white group-hover/session:text-[#4F86C6] transition-colors">{s.requestedSkill}</h4>
+                        <span className="text-[8px] font-black text-[#4F86C6] bg-[#4F86C6]/10 px-1.5 py-0.5 rounded uppercase">{s.status}</span>
+                      </div>
+                      <p className="text-[9px] text-gray-500 font-mono mb-3 uppercase tabular-nums">
+                         {new Date(s.scheduledAt).toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
+                      </p>
+                      {s.status === "Confirmed" && (
+                        <Link to={`/room/${s._id}`} className="block w-full text-center bg-green-500 text-black py-2 rounded-xl text-[9px] font-black uppercase hover:bg-green-400 transition-all shadow-[0_5px_15px_-5px_rgba(34,197,94,0.3)]">
+                          Join Session
+                        </Link>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* TILE 7: NETWORK & GROWTH HUB */}
+            <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Recommendations */}
+              <div className="lg:col-span-2 bg-[#111] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden">
+                <div className="flex justify-between items-center mb-6">
+                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[#4F86C6]">Recommended for you</h4>
+                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {loadingMatches ? (
+                    [1, 2].map((i) => <div key={i} className="h-20 bg-white/3 rounded-2xl animate-pulse" />)
+                  ) : matches.length === 0 ? (
+                    <p className="text-gray-600 text-[10px] italic py-2">Add goals to find matches.</p>
+                  ) : (
+                    matches.slice(0, 4).map((m, i) => (
+                      <div key={m._id || i} className="p-4 rounded-2xl bg-black/40 border border-white/5 hover:border-[#4F86C6]/30 transition-all cursor-pointer group/match">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-[#4F86C6]/20 rounded-lg flex items-center justify-center text-[#4F86C6] font-black text-[10px] uppercase">{m.name?.charAt(0)}</div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-black group-hover/match:text-[#4F86C6] transition-colors truncate">{m.name}</p>
+                            <p className="text-[8px] text-gray-500 uppercase tracking-widest truncate">{m.teachingSkills?.[0]?.skillName || "Expert"}</p>
+                          </div>
+                          <span className="text-[9px] font-black text-green-400 tabular-nums">{m.compatibilityScore}%</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Network */}
+              <div className="bg-gradient-to-br from-[#161616] to-black border border-white/5 rounded-[2.5rem] p-8">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-white">TECH NETWORK</h4>
+                  <span className="text-[8px] font-black text-green-500 uppercase">1.2k Active</span>
+                </div>
+                <div className="space-y-2 mb-6">
+                  <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-[#FF7849]/20 flex items-center justify-center text-sm">⚡</div>
+                      <div>
+                        <p className="text-[10px] font-black text-white">Frontend Cohort</p>
+                        <p className="text-[8px] text-gray-500 uppercase">Live in 2h</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-white/[0.02] border border-white/5 rounded-xl flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-[#4F86C6]/20 flex items-center justify-center text-sm">⚙️</div>
+                      <div>
+                        <p className="text-[10px] font-black text-white">Sys-Design Hub</p>
+                        <p className="text-[8px] text-gray-500 uppercase">45 Active</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <Link to="/communities" className="block w-full text-center py-3 border border-white/10 text-white font-black text-[9px] uppercase tracking-widest rounded-xl hover:bg-white hover:text-black transition-all">Explore Network</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
           </div>
         </div>
       </main>

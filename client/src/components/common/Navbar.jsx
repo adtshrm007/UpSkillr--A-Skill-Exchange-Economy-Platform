@@ -19,7 +19,10 @@ export default function NavBar() {
         {isActive && (
           <div
             className="absolute -left-1 hidden lg:block w-1 h-6 rounded-full transition-all duration-500"
-            style={{ backgroundColor: iconColor, boxShadow: `0 0 10px ${iconColor}` }}
+            style={{
+              backgroundColor: iconColor,
+              boxShadow: `0 0 10px ${iconColor}`,
+            }}
           />
         )}
         {React.cloneElement(children, {
@@ -31,12 +34,16 @@ export default function NavBar() {
   };
 
   return (
-    <nav className="fixed bottom-0 w-full bg-[#121212]/90 backdrop-blur-xl border-t border-white/5 p-4 flex justify-around items-center z-50 
-      lg:fixed lg:left-8 lg:top-1/2 lg:-translate-y-1/2 lg:w-20 lg:h-fit lg:flex-col lg:bg-[#161616] lg:border lg:border-white/10 lg:rounded-[40px] lg:py-10 lg:gap-8 lg:shadow-2xl">
+    <nav
+      className="fixed bottom-0 w-full bg-[#121212]/90 backdrop-blur-xl border-t border-white/5 p-4 flex justify-around items-center z-50 
+      lg:fixed lg:left-8 lg:top-1/2 lg:-translate-y-1/2 lg:w-20 lg:h-fit lg:flex-col lg:bg-[#161616] lg:border lg:border-white/10 lg:rounded-[40px] lg:py-10 lg:gap-8 lg:shadow-2xl"
+    >
       {/* Logo — desktop only */}
-      <div className="hidden lg:block w-10 h-10 mb-4 transition-transform hover:rotate-12 duration-500">
-        <img src={logo} alt="logo" className="w-full h-full object-contain" />
-      </div>
+      <Link to="/">
+        <div className="hidden lg:block w-10 h-10 mb-4 transition-transform hover:rotate-12 duration-500">
+          <img src={logo} alt="logo" className="w-full h-full object-contain" />
+        </div>
+      </Link>
 
       <div className="flex lg:flex-col gap-8 lg:gap-6 items-center">
         {/* Dashboard */}
@@ -59,8 +66,6 @@ export default function NavBar() {
             <path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z" />
           </svg>
         </NavItem>
-
-
 
         {/* Credits (was /analytics) */}
         <NavItem to="/credits" iconColor="#FF7849">
