@@ -9,9 +9,9 @@ export const createCourse = async (req, res) => {
     const { title, description, category, creditCost } = req.body;
     
     // Check if user has > 1000 credits to be a Course Creator
-    if (req.user.skillCredits < 1000) {
-      return res.status(403).json({ message: "You need at least 1000 credits to become a Course Creator." });
-    }
+    // if (req.user.skillCredits < 1000) {
+    //   return res.status(403).json({ message: "You need at least 1000 credits to become a Course Creator." });
+    // }
 
     if (!title || !description || !category || creditCost === undefined) {
       return res.status(400).json({ message: "All fields are required" });

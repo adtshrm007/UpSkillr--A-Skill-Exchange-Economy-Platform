@@ -116,7 +116,7 @@ export default function DashboardPage() {
                 <Link to="/explore" className="bg-white text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#FF7849] hover:text-black transition-all">
                   Start Skill Swap
                 </Link>
-                <Link to="/explore" className="bg-[#4F86C6]/20 text-[#4F86C6] px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#4F86C6] hover:text-white transition-all">
+                <Link to="/mentors" className="bg-[#4F86C6]/20 text-[#4F86C6] px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#4F86C6] hover:text-white transition-all">
                   Find a Mentor
                 </Link>
                 <button className="bg-white/5 text-gray-300 border border-white/10 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">

@@ -18,6 +18,8 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import LearningRoom from "./pages/LearningRoom.jsx";
 import CourseCreatorDashboard from "./pages/CourseCreatorDashboard.jsx";
 
+import { TopTeachers } from "./pages/TopTeachers.jsx";
+
 import { useSocket } from "./hooks/useSocket.js";
 import { useToast } from "./context/Toast.context.jsx";
 import { useEffect } from "react";
@@ -48,20 +50,105 @@ export default function App() {
             <Route path="/signup" element={<SignUp />} />
 
             {/* Protected Routes */}
-            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-            <Route path="/user/:id" element={<ProtectedRoute><PublicProfilePage /></ProtectedRoute>} />
-            <Route path="/room/:id" element={<ProtectedRoute><LearningRoom /></ProtectedRoute>} />
-            <Route path="/explore" element={<ProtectedRoute><TopMatchesAndSearches /></ProtectedRoute>} />
-            <Route path="/TopMatchesAndSearches" element={<ProtectedRoute><TopMatchesAndSearches /></ProtectedRoute>} />
-            <Route path="/sessions" element={<ProtectedRoute><SessionsPage /></ProtectedRoute>} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/user/:id"
+              element={
+                <ProtectedRoute>
+                  <PublicProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/room/:id"
+              element={
+                <ProtectedRoute>
+                  <LearningRoom />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/explore"
+              element={
+                <ProtectedRoute>
+                  <TopMatchesAndSearches />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/TopMatchesAndSearches"
+              element={
+                <ProtectedRoute>
+                  <TopMatchesAndSearches />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/sessions"
+              element={
+                <ProtectedRoute>
+                  <SessionsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/mentors"
+              element={
+                <ProtectedRoute>
+                  <TopTeachers />
+                </ProtectedRoute>
+              }
+            />
 
-            <Route path="/notifications" element={<ProtectedRoute><NotificationsPage /></ProtectedRoute>} />
-            <Route path="/credits" element={<ProtectedRoute><CreditsPage /></ProtectedRoute>} />
-            <Route path="/creator" element={<ProtectedRoute><CourseCreatorDashboard /></ProtectedRoute>} />
+            <Route
+              path="/notifications"
+              element={
+                <ProtectedRoute>
+                  <NotificationsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/credits"
+              element={
+                <ProtectedRoute>
+                  <CreditsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/creator"
+              element={
+                <ProtectedRoute>
+                  <CourseCreatorDashboard />
+                </ProtectedRoute>
+              }
+            />
 
             {/* Admin Route */}
-            <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute adminOnly>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </BrowserRouter>
       </ToastProvider>

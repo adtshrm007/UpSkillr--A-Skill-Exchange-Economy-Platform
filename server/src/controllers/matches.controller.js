@@ -6,13 +6,22 @@ export const findMatches = async (req, res) => {
     const user = await userModel.findById(req.user._id);
 
     if (!user)
-      return res.status(401).json({ message: "User not found. Please log in again." });
-
-    const myTeaching = user.teachingSkills.map((s) => s.skillName.toLowerCase());
-    const myLearning = user.learningSkills.map((s) => s.skillName.toLowerCase());
+      return res
+        .status(401)
+        .json({ message: "User not found. Please log in again." });
+    const myTeaching = user.teachingSkills.map((s) =>
+      s.skillName.toLowerCase(),
+    );
+    const myLearning = user.learningSkills.map((s) =>
+      s.skillName.toLowerCase(),
+    );
 
     if (!myTeaching.length && !myLearning.length)
-      return res.status(200).json({ matches: [], total: 0, message: "Add skills to your profile to find matches" });
+      return res.status(200).json({
+        matches: [],
+        total: 0,
+        message: "Add skills to your profile to find matches",
+      });
 
     // Build match query
     const query = {
@@ -27,8 +36,16 @@ export const findMatches = async (req, res) => {
       ];
     } else if (myLearning.length || myTeaching.length) {
       query.$or = [
-        { "teachingSkills.skillName": { $in: myLearning.map((s) => new RegExp(s, "i")) } },
-        { "learningSkills.skillName": { $in: myTeaching.map((s) => new RegExp(s, "i")) } },
+        {
+          "teachingSkills.skillName": {
+            $in: myLearning.map((s) => new RegExp(s, "i")),
+          },
+        },
+        {
+          "learningSkills.skillName": {
+            $in: myTeaching.map((s) => new RegExp(s, "i")),
+          },
+        },
       ];
     }
 
@@ -36,32 +53,53 @@ export const findMatches = async (req, res) => {
 
     const candidates = await userModel
       .find(query)
-      .select("name email bio profilePhoto teachingSkills learningSkills reputationScore totalReviews skillCredits availability")
+      .select(
+        "name email bio profilePhoto teachingSkills learningSkills reputationScore totalReviews skillCredits availability",
+      )
       .skip(skip)
       .limit(parseInt(limit))
       .lean();
 
     // Compute compatibility score
-    const scored = candidates.map((c) => {
-      const theirTeaching = c.teachingSkills.map((s) => s.skillName.toLowerCase());
-      const theirLearning = c.learningSkills.map((s) => s.skillName.toLowerCase());
+    const scored = candidates
+      .map((c) => {
+        const theirTeaching = c.teachingSkills.map((s) =>
+          s.skillName.toLowerCase(),
+        );
+        const theirLearning = c.learningSkills.map((s) =>
+          s.skillName.toLowerCase(),
+        );
 
-      const canTeachMe = theirTeaching.filter((s) => myLearning.includes(s)).length;
-      const iCanTeach = myTeaching.filter((s) => theirLearning.includes(s)).length;
-      const total = myLearning.length + myTeaching.length;
+        const canTeachMe = theirTeaching.filter((s) =>
+          myLearning.includes(s),
+        ).length;
+        const iCanTeach = myTeaching.filter((s) =>
+          theirLearning.includes(s),
+        ).length;
+        const total = myLearning.length + myTeaching.length;
 
-      const hasAvailability = c.availability && c.availability.some(a => a.status === "Available");
-      const baseCompat = total > 0 ? Math.round(((canTeachMe + iCanTeach) / (total * 2)) * 100) : 0;
-      
-      let enhancedScore = baseCompat;
-      if (baseCompat > 0) {
-        const repBonus = (c.reputationScore || 0) * 2; // max +10
-        const availBonus = hasAvailability ? 10 : 0; // max +10
-        enhancedScore = Math.min(100, baseCompat + repBonus + availBonus);
-      }
+        const hasAvailability =
+          c.availability &&
+          c.availability.some((a) => a.status === "Available");
+        const baseCompat =
+          total > 0
+            ? Math.round(((canTeachMe + iCanTeach) / (total * 2)) * 100)
+            : 0;
 
-      return { ...c, compatibilityScore: enhancedScore };
-    }).sort((a, b) => b.compatibilityScore - a.compatibilityScore || b.reputationScore - a.reputationScore);
+        let enhancedScore = baseCompat;
+        if (baseCompat > 0) {
+          const repBonus = (c.reputationScore || 0) * 2; // max +10
+          const availBonus = hasAvailability ? 10 : 0; // max +10
+          enhancedScore = Math.min(100, baseCompat + repBonus + availBonus);
+        }
+
+        return { ...c, compatibilityScore: enhancedScore };
+      })
+      .sort(
+        (a, b) =>
+          b.compatibilityScore - a.compatibilityScore ||
+          b.reputationScore - a.reputationScore,
+      );
 
     const total = await userModel.countDocuments(query);
 
@@ -73,6 +111,79 @@ export const findMatches = async (req, res) => {
     });
   } catch (error) {
     console.error("[findMatches]", error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+export const findTeachers = async (req, res) => {
+  try {
+    const { page = 1, limit = 12, skill } = req.query;
+
+    const user = await userModel.findById(req.user._id);
+    if (!user) {
+      return res
+        .status(401)
+        .json({ message: "User not found. Please log in again." });
+    }
+
+    // Extract learning skills properly
+    const learningSkills = user.learningSkills.map((s) =>
+      s.skillName.toLowerCase(),
+    );
+
+    if (!learningSkills.length) {
+      return res.status(200).json({
+        matches: [],
+        total: 0,
+        message: "Add skills to your profile to find teachers",
+      });
+    }
+
+    // Base query
+    const query = {
+      _id: { $ne: user._id },
+      isActive: true,
+    };
+
+    // Skill-based search (optional)
+    if (skill) {
+      query["teachingSkills.skillName"] = new RegExp(skill, "i");
+    } else {
+      query["teachingSkills.skillName"] = {
+        $in: learningSkills.map((s) => new RegExp(s, "i")),
+      };
+    }
+
+    // Pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const teachers = await userModel
+      .find(query)
+      .select(
+        "name email bio profilePhoto teachingSkills reputationScore totalReviews availability",
+      )
+      .skip(skip)
+      .limit(parseInt(limit))
+      .lean();
+
+    const total = await userModel.countDocuments(query);
+
+    if (!teachers.length) {
+      return res.status(200).json({
+        matches: [],
+        message: "No teachers found",
+      });
+    }
+
+    return res.status(200).json({
+      matches: teachers,
+      total,
+      page: parseInt(page),
+      totalPages: Math.ceil(total / limit),
+      message: "Teachers found",
+    });
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: "Server Error" });
   }
 };

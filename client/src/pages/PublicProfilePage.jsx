@@ -36,6 +36,7 @@ export default function PublicProfilePage() {
         setReviews(revRes.data.reviews || []);
       })
       .catch((err) => {
+        console.error(err)
         toast({ message: "Failed to load profile", type: "error" });
       })
       .finally(() => setLoading(false));
@@ -93,7 +94,7 @@ export default function PublicProfilePage() {
           <Link to="/explore" className="text-xs uppercase tracking-widest text-[#FF7849] hover:underline font-bold">← Back to Explore</Link>
           
           <header className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-3xl bg-gradient-to-br from-[#4F86C6]/30 to-[#FF7849]/20 flex items-center justify-center text-white font-black text-4xl uppercase shrink-0">
+            <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-3xl bg-linear-to-br from-[#4F86C6]/30 to-[#FF7849]/20 flex items-center justify-center text-white font-black text-4xl uppercase shrink-0">
               {profile.name?.charAt(0)}
             </div>
             
