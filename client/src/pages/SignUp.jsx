@@ -1,4 +1,6 @@
 import logo from "../assets/Logo.png";
+import google from "../assets/google.svg";
+import instagram from "../assets/instagram.svg";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { authService } from "../services/auth.service.js";
@@ -17,92 +19,108 @@ export default function SignUp() {
   const handleRegister = async (e) => {
     e?.preventDefault();
     if (!name || !email || !password || !confirmPassword) {
-      setError("All fields are required.");
+      setError("Incomplete handshake. All fields required.");
       return;
     }
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError("Security keys do not match.");
       return;
     }
     if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+      setError("Key strength insufficient. Min. 6 chars.");
       return;
     }
     setError("");
     setLoading(true);
     try {
       await authService.register({ name: name.trim(), email, password });
-      toast({ message: "Account created! You received 200 credits 🎉", type: "success", duration: 5000 });
+      toast({ message: "Node Initialized! Received 200 credits 🎉", type: "success", duration: 5000 });
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
+      setError(err.response?.data?.message || "Registration sequence failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen w-full bg-[#121212] overflow-x-hidden">
+    <div className="flex flex-col lg:flex-row min-h-screen w-full overflow-x-hidden bg-[#0A0A0A] text-white font-mono selection:bg-[#FF7849]/30">
       {/* LEFT SIDE: BRANDING */}
-      <div className="w-full lg:w-1/2 bg-[#2A2A2A] p-6 lg:p-12 flex flex-col justify-between min-h-[40vh] lg:min-h-screen">
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="logo" className="w-12 h-12 lg:w-16 lg:h-16 object-contain" />
+      <div className="w-full lg:w-1/2 bg-[#121212] p-8 lg:p-20 flex flex-col justify-between border-r border-white/5 relative overflow-hidden">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[#FF7849]/10 blur-[120px] rounded-full" />
+        <div className="flex items-center gap-3 relative z-10 animate-in fade-in slide-in-from-left duration-500">
+          <img src={logo} alt="logo" className="w-12 h-12 object-contain" />
           <Link to="/">
-            <p className="font-mono text-xl lg:text-2xl text-white mt-2">UpSkillr</p>
+            <p className="text-xl font-black tracking-tighter uppercase italic">UpSkillr</p>
           </Link>
         </div>
-        <div className="mt-10 lg:mt-0 mb-10 lg:mb-20">
-          <h1 className="text-white text-5xl md:text-7xl xl:text-8xl font-rose leading-tight">
-            Join the
-            <br />
-            <span className="font-mono text-[#FF7849] text-6xl md:text-8xl xl:text-9xl">Exchange.</span>
+
+        <div className="relative z-10 mt-12 lg:mt-0">
+          <p className="text-[#FF7849] text-xs font-bold tracking-[0.4em] uppercase mb-4">New Node Registration</p>
+          <h1 className="text-6xl md:text-8xl xl:text-9xl font-black leading-tight tracking-tighter">
+            JOIN THE <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF7849] to-white">NETWORK.</span>
           </h1>
-          <p className="text-[#868686] text-sm md:text-lg lg:text-xl font-mono mt-4 tracking-wider">
-            Teach what you know. Learn what you need.
+          <p className="text-gray-500 text-lg mt-6 max-w-sm leading-relaxed">
+            Secure your spot in the ecosystem and start your{" "}
+            <span className="text-[#4F86C6] font-bold italic underline decoration-1">growth sprint</span> today.
           </p>
-          <div className="mt-6 flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-4 py-3">
-            <div className="w-8 h-8 bg-[#FF7849] rounded-full flex items-center justify-center text-black font-black text-sm">✦</div>
-            <p className="text-white font-mono text-sm">
-              <span className="font-black text-[#FF7849]">200 credits</span> awarded on signup
-            </p>
+
+          <div className="mt-10 inline-flex items-center gap-4 bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 animate-in zoom-in duration-700 delay-300">
+            <div className="w-10 h-10 bg-[#FF7849] rounded-full flex items-center justify-center text-black font-black shadow-[0_0_20px_rgba(255,120,73,0.4)]">
+              ✦
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-widest text-[#FF7849]">Bonus Credits</p>
+              <p className="text-xl font-black tracking-tighter">200 XP Awarded</p>
+            </div>
           </div>
+        </div>
+
+        <div className="hidden lg:block relative z-10 border-t border-white/10 pt-8">
+          <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold">© 2026 UpSkillr Neural Network</p>
         </div>
       </div>
 
-      {/* RIGHT SIDE: SIGNUP FORM */}
-      <div className="w-full lg:w-1/2 bg-[#121212] flex flex-col relative">
-        <div className="hidden lg:flex justify-end gap-8 p-8 text-[#868686] font-mono text-sm uppercase tracking-widest">
-          <p className="hover:text-white cursor-pointer transition-colors">How It Works</p>
-          <p className="hover:text-white cursor-pointer transition-colors">Community</p>
-          <p className="hover:text-white cursor-pointer transition-colors">Stories</p>
-        </div>
+      {/* RIGHT SIDE: AUTH FORM */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 lg:p-24 relative">
+        <form onSubmit={handleRegister} className="w-full max-w-md space-y-8 animate-in fade-in slide-in-from-bottom duration-700">
+          <header className="space-y-2">
+            <h2 className="text-3xl font-black tracking-tight uppercase italic underline decoration-[#4F86C6] decoration-4">Sign Up</h2>
+            <p className="text-gray-500 text-sm font-medium">Initialize your identity across the network.</p>
+          </header>
 
-        <div className="flex-1 flex flex-col items-center justify-center p-6 lg:p-0 pb-16 lg:pb-0">
-          <form onSubmit={handleRegister} className="w-full max-w-md flex flex-col gap-6">
-            <h2 className="font-rose text-white text-3xl lg:text-4xl text-center lg:text-left">Sign Up</h2>
-
-            <div className="space-y-4">
-              {[
-                { placeholder: "Full Name", value: name, setter: setName, type: "text", autoComplete: "name" },
-                { placeholder: "Email", value: email, setter: setEmail, type: "email", autoComplete: "email" },
-                { placeholder: "Password (min. 6 chars)", value: password, setter: setPassword, type: "password", autoComplete: "new-password" },
-                { placeholder: "Confirm Password", value: confirmPassword, setter: setConfirmPassword, type: "password", autoComplete: "new-password" },
-              ].map(({ placeholder, value, setter, type, autoComplete }) => (
-                <div key={placeholder} className="w-full h-14 lg:h-16 rounded-xl border border-[#868686] focus-within:border-[#FF7849] transition-all">
-                  <input
-                    type={type}
-                    autoComplete={autoComplete}
-                    className="w-full h-full bg-transparent outline-none font-mono text-white px-6 placeholder:text-gray-600"
-                    placeholder={placeholder}
-                    value={value}
-                    onChange={(e) => setter(e.target.value)}
-                  />
-                </div>
-              ))}
-            </div>
+          <div className="space-y-5">
+            {[
+              { label: "Primary ID", type: "text", placeholder: "Full Name", value: name, setter: setName, color: "#4F86C6" },
+              { label: "Email Hash", type: "email", placeholder: "name@nexus.com", value: email, setter: setEmail, color: "#FF7849" },
+              { label: "Security Key", type: "password", placeholder: "••••••••", value: password, setter: setPassword, color: "#4F86C6" },
+              { label: "Confirm Key", type: "password", placeholder: "••••••••", value: confirmPassword, setter: setConfirmPassword, color: "#FF7849" },
+            ].map((field) => (
+              <div key={field.label} className="group space-y-2">
+                <label 
+                  className="text-[10px] uppercase font-black text-gray-500 transition-colors tracking-widest pl-1"
+                  style={{ "--tw-text-opacity": "1" }}
+                  onMouseEnter={(e) => e.target.style.color = field.color}
+                  onMouseLeave={(e) => e.target.style.color = ""}
+                >
+                  {field.label}
+                </label>
+                <input
+                  type={field.type}
+                  className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-6 py-4 outline-none transition-all text-sm placeholder:text-gray-700"
+                  style={{ focusBorderColor: field.color }}
+                  placeholder={field.placeholder}
+                  value={field.value}
+                  onChange={(e) => field.setter(e.target.value)}
+                  onFocus={(e) => e.target.style.borderColor = field.color}
+                  onBlur={(e) => e.target.style.borderColor = ""}
+                />
+              </div>
+            ))}
 
             {error && (
-              <div className="bg-red-950/50 border border-red-500/30 text-red-300 text-xs px-4 py-3 rounded-xl font-mono font-bold">
+              <div className="bg-red-950/50 border border-red-500/30 text-red-300 text-xs px-4 py-3 rounded-xl font-bold">
                 {error}
               </div>
             )}
@@ -110,20 +128,41 @@ export default function SignUp() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full lg:w-fit px-10 h-12 bg-white text-black font-mono font-bold rounded-full text-lg hover:bg-gray-200 transition-colors self-center lg:self-start disabled:opacity-50"
+              className="w-full bg-white text-black font-black py-4 rounded-2xl uppercase tracking-[0.2em] hover:bg-gray-200 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_30px_-10px_rgba(255,255,255,0.3)] disabled:opacity-50"
             >
-              {loading ? "Creating Account..." : "Start Swapping"}
+              {loading ? "INITIALIZING NODE..." : "CREATE IDENTITY"}
             </button>
+          </div>
 
-            <p className="text-[#868686] font-mono text-center lg:text-left">
-              Already a member?{" "}
-              <Link to="/login">
-                <span className="text-[#4F86C6] hover:underline cursor-pointer font-bold">Log In</span>
-              </Link>
-            </p>
-          </form>
-        </div>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-white/5" />
+            </div>
+            <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-widest">
+              <span className="bg-[#0A0A0A] px-4 text-gray-600">External Relays</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <button type="button" className="flex items-center justify-center gap-3 bg-white/[0.03] border border-white/10 py-3 rounded-xl hover:bg-white/[0.08] hover:border-white/20 transition-all group">
+              <img src={google} alt="google" className="w-4 h-4 grayscale group-hover:grayscale-0 transition-all" />
+              <span className="text-[10px] font-bold uppercase text-gray-400">Google</span>
+            </button>
+            <button type="button" className="flex items-center justify-center gap-3 bg-white/[0.03] border border-white/10 py-3 rounded-xl hover:bg-white/[0.08] hover:border-white/20 transition-all group">
+              <img src={instagram} alt="instagram" className="w-4 h-4 grayscale group-hover:grayscale-0 transition-all" />
+              <span className="text-[10px] font-bold uppercase text-gray-400">Instagram</span>
+            </button>
+          </div>
+
+          <p className="text-gray-500 text-xs text-center font-medium">
+            Already registered?{" "}
+            <Link to="/login" className="text-[#4F86C6] font-black uppercase tracking-tighter hover:underline">
+              Initialize Login
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
   );
 }
+
