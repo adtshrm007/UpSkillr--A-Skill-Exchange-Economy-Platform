@@ -2,7 +2,7 @@ import React from "react";
 
 const UserMatchCard = ({ user, matchPercent = 85 }) => {
   return (
-    <div className="bg-[#161616] border border-white/10 rounded-[32px] p-6 hover:border-[#4F86C6]/50 transition-all duration-300 group shadow-xl">
+    <div className="bg-[#161616] border border-white/10 rounded-4xl p-6 hover:border-[#4F86C6]/50 transition-all duration-300 group shadow-xl">
       {/* Header: Photo & Name */}
       <div className="flex items-center gap-4 mb-6">
         <div className="relative">

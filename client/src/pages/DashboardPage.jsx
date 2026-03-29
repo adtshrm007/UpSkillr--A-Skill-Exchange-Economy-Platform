@@ -85,35 +85,92 @@ export default function DashboardPage() {
     }
   }, [user]);
 
+  const randomNextStep = useMemo(() => {
+    const steps = [
+      "Continue your ongoing session",
+      "You have pending swap requests",
+      "Recommended skill to explore next",
+      "Suggested mentor based on your goals"
+    ];
+    // deterministically pseudorandom using email length or something static so it doesn't flicker on re-renders,
+    // actually Math.random() in useMemo is stable within session.
+    return steps[Math.floor(Math.random() * steps.length)];
+  }, []);
+
   return (
     <div className="bg-[#080808] min-h-screen w-full flex flex-col lg:flex-row font-mono text-gray-200 overflow-x-hidden">
       <NavBar />
       <main className="flex-1 p-4 lg:p-10 lg:pl-32 xl:pl-40">
         <div className="max-w-full mx-auto space-y-10">
-          {/* GREETING HEADER */}
-          <header className="flex flex-col md:flex-row md:items-end justify-between gap-4 animate-in fade-in slide-in-from-top duration-700">
-            <div>
+          {/* GREETING HEADER & PROGRESS */}
+          <header className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 animate-in fade-in slide-in-from-top duration-700">
+            <div className="flex-1">
               <p className="text-[10px] uppercase tracking-[0.4em] text-[#FF7849] font-black mb-1">
-                System Status: Active
+                Developer Environment: Active
               </p>
-              <h2 className="text-4xl lg:text-5xl font-black tracking-tighter italic">
+              <h2 className="text-4xl lg:text-5xl font-black tracking-tighter italic mb-6">
                 HELLO, <span className="text-white uppercase">{name}</span>
               </h2>
-            </div>
-            <div className="hidden md:flex flex-col items-end gap-2 text-right">
-              <div>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
-                  Level
-                </p>
-                <p className="text-xl font-black text-[#4F86C6]">{skillLevel}</p>
-              </div>
-              {skillCredits >= 1000 && (
-                <Link to="/creator" className="mt-2 text-center px-4 py-2 bg-[#FF7849]/20 text-[#FF7849] text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-[#FF7849] hover:text-black transition-all">
-                  Creator Dashboard
+              {/* STRONG CTAS */}
+              <div className="flex flex-wrap gap-3">
+                <Link to="/explore" className="bg-white text-black px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#FF7849] hover:text-black transition-all">
+                  Start Skill Swap
                 </Link>
-              )}
+                <Link to="/explore" className="bg-[#4F86C6]/20 text-[#4F86C6] px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-[#4F86C6] hover:text-white transition-all">
+                  Find a Mentor
+                </Link>
+                <button className="bg-white/5 text-gray-300 border border-white/10 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
+                  Continue Learning
+                </button>
+                <Link to="/explore" className="bg-white/5 text-gray-300 border border-white/10 px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">
+                  Explore Communities
+                </Link>
+              </div>
+            </div>
+
+            {/* UPGRADED PROGRESS SECTION */}
+            <div className="lg:w-1/3 bg-[#111] border border-white/10 p-5 rounded-2xl flex flex-col gap-3">
+              <div className="flex justify-between items-end">
+                <div>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">
+                    Current Rank
+                  </p>
+                  <p className="text-lg font-black text-[#4F86C6]">Code Spark</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-black text-[#FF7849] uppercase">Next: Code Legend</p>
+                  <p className="text-xs text-white font-bold">{user?.totalHoursTaught || 0} / 50 XP</p>
+                </div>
+              </div>
+              
+              {/* Progress Bar */}
+              <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-[#4F86C6] to-[#FF7849]" 
+                  style={{ width: `${Math.min(((user?.totalHoursTaught || 0) / 50) * 100, 100)}%` }}
+                ></div>
+              </div>
+              <p className="text-[9px] text-gray-500 uppercase font-black tracking-widest text-right mt-1">
+                {50 - (user?.totalHoursTaught || 0)} XP to next level
+              </p>
             </div>
           </header>
+
+          {/* NEXT STEP IN TECH SECTION */}
+          <section className="bg-gradient-to-r from-[#FF7849]/10 via-[#111] to-[#4F86C6]/10 border border-white/10 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-[#FF7849]/20 flex items-center justify-center">
+                <span className="text-xl animate-bounce">⚡</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-black text-white uppercase tracking-widest mb-1">Your Next Step</h3>
+                <p className="text-xs text-gray-400 font-medium font-mono">{randomNextStep}</p>
+              </div>
+            </div>
+            <button className="bg-white text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-gray-200 transition-all shadow-lg whitespace-nowrap">
+              Continue Learning →
+            </button>
+          </section>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* LEFT COLUMN */}
@@ -128,7 +185,7 @@ export default function DashboardPage() {
                         <span className="text-[#4F86C6] text-2xl">hrs</span>
                       </h3>
                       <p className="text-[10px] uppercase font-bold text-gray-500 tracking-[0.2em] mt-2">
-                        Total Hours Taught
+                        Hours Taught
                       </p>
                     </div>
                     <div className="text-right">
@@ -136,7 +193,7 @@ export default function DashboardPage() {
                         {user?.totalSessionsCompleted || 0}
                       </h3>
                       <p className="text-[10px] uppercase font-bold text-gray-500 tracking-[0.2em] mt-2">
-                        Total Sessions
+                        Sessions Completed
                       </p>
                     </div>
                   </div>
@@ -177,7 +234,7 @@ export default function DashboardPage() {
                 <section className="bg-white/2 border border-white/5 p-8 rounded-3xl hover:bg-white/4 transition-colors">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#FF7849] mb-6 flex items-center gap-3">
                     <span className="w-2 h-2 bg-[#FF7849] rounded-full animate-pulse" />{" "}
-                    Your Stack
+                    Tech Stack
                   </h3>
                   <div className="flex flex-wrap gap-3">
                     {(teachingSkills || []).length === 0 ? (
@@ -185,7 +242,7 @@ export default function DashboardPage() {
                         to="/profile"
                         className="text-xs text-gray-600 italic hover:text-white transition-colors"
                       >
-                        Add skills on your profile →
+                        Add tech skills on your profile →
                       </Link>
                     ) : (
                       teachingSkills.map((s, i) => (
@@ -208,7 +265,7 @@ export default function DashboardPage() {
                 <section className="bg-white/2 border border-white/5 p-8 rounded-3xl hover:bg-white/4 transition-colors">
                   <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-[#4F86C6] mb-6 flex items-center gap-3">
                     <span className="w-2 h-2 bg-[#4F86C6] rounded-full" />{" "}
-                    Target Skills
+                    Learning Goals
                   </h3>
                   <div className="flex flex-wrap gap-3">
                     {(learningSkills || []).length === 0 ? (
@@ -216,7 +273,7 @@ export default function DashboardPage() {
                         to="/profile"
                         className="text-xs text-gray-600 italic hover:text-white transition-colors"
                       >
-                        Add skill goals →
+                        Add learning goals →
                       </Link>
                     ) : (
                       learningSkills.map((s, i) => (
@@ -233,10 +290,12 @@ export default function DashboardPage() {
               </div>
 
               {/* UPCOMING SESSIONS */}
-              <section className="bg-white/2 border border-white/5 p-8 rounded-3xl">
-                <div className="flex justify-between items-center mb-8">
-                  <h3 className="text-xs font-black uppercase tracking-widest italic">
-                    Upcoming Sessions
+              <section className="bg-gradient-to-br from-black to-white/5 border border-white/5 p-8 rounded-3xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#FF7849]/10 blur-[50px] rounded-full pointer-events-none"></div>
+                
+                <div className="flex justify-between items-center mb-8 relative z-10">
+                  <h3 className="text-xs font-black uppercase tracking-widest italic flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping"></span> Live & Upcoming
                   </h3>
                   <Link
                     to="/sessions"
@@ -250,20 +309,20 @@ export default function DashboardPage() {
                     {[1, 2].map((i) => (
                       <div
                         key={i}
-                        className="flex-1 h-20 bg-white/3 rounded-2xl animate-pulse"
+                        className="flex-1 h-24 bg-white/3 rounded-2xl animate-pulse"
                       />
                     ))}
                   </div>
                 ) : sessions.length === 0 ? (
                   <div className="text-center py-8">
                     <p className="text-gray-600 text-xs italic">
-                      No upcoming sessions.
+                      No learning sessions scheduled yet.
                     </p>
                     <Link
                       to="/explore"
                       className="text-[#4F86C6] text-xs font-bold hover:underline mt-2 block"
                     >
-                      Find someone to learn from →
+                      Find an engineering mentor →
                     </Link>
                   </div>
                 ) : (
@@ -271,18 +330,18 @@ export default function DashboardPage() {
                     {sessions.map((s) => (
                       <div
                         key={s._id}
-                        className="bg-white/3 p-5 rounded-2xl border border-white/5"
+                        className="group bg-[#161616] p-5 rounded-2xl border border-white/5 hover:border-[#4F86C6]/50 transition-colors shadow-xl"
                       >
                         <div className="flex justify-between items-start mb-3">
-                          <h4 className="text-sm font-black">
-                            {s.requestedSkill}
+                          <h4 className="text-sm font-black text-white group-hover:text-[#4F86C6] transition-colors">
+                            {s.requestedSkill} Session
                             {s.offeredSkill && <span className="block text-[8px] text-green-400 mt-1 uppercase tracking-widest">Swap: {s.offeredSkill}</span>}
                           </h4>
-                          <span className="text-[10px] font-black text-[#4F86C6] bg-[#4F86C6]/10 px-2 py-0.5 rounded">
+                          <span className="text-[9px] font-black text-[#4F86C6] bg-[#4F86C6]/10 px-2 py-0.5 rounded uppercase">
                             {s.status}
                           </span>
                         </div>
-                        <p className="text-[10px] text-gray-500">
+                        <p className="text-[10px] text-gray-400 font-bold font-mono">
                           {new Date(s.scheduledAt).toLocaleDateString("en-US", {
                             month: "short",
                             day: "numeric",
@@ -290,13 +349,15 @@ export default function DashboardPage() {
                             minute: "2-digit",
                           })}
                         </p>
-                        <div className="flex justify-between items-center mt-2">
-                          <p className="text-[10px] text-gray-600">
-                            {s.durationHrs}hr · {s.creditCost} credits
-                          </p>
+                        <div className="flex justify-between items-end mt-4">
+                          <div>
+                            <p className="text-[10px] text-gray-500 font-mono tracking-tighter uppercase font-bold">
+                              {s.durationHrs} hr <span className="mx-1">•</span> {s.creditCost} credits
+                            </p>
+                          </div>
                           {s.status === "Confirmed" && (
-                            <Link to={`/room/${s._id}`} className="text-[9px] font-bold text-[#4F86C6] hover:underline">
-                              Join Room →
+                            <Link to={`/room/${s._id}`} className="bg-green-500 text-black px-5 py-2 rounded-lg text-[10px] font-black uppercase hover:bg-green-400 transition-all shadow-[0_0_15px_rgba(34,197,94,0.4)] active:scale-95">
+                              Join
                             </Link>
                           )}
                         </div>
@@ -376,15 +437,23 @@ export default function DashboardPage() {
                 </div>
               </section>
 
-              {/* MATCHES */}
-              <section className="bg-white/2 border border-white/5 rounded-3xl p-8">
-                <div className="flex justify-between items-center mb-8">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em]">
-                    Live Connections
+              {/* RECOMMENDED FOR YOU */}
+              <section className="bg-white/2 border border-white/5 rounded-3xl p-8 relative overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#4F86C6]/10 blur-[40px] rounded-full pointer-events-none"></div>
+                <div className="flex justify-between items-center mb-8 relative z-10">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#4F86C6]">
+                    Recommended For You
                   </h4>
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_green]" />
                 </div>
-                <div className="space-y-4">
+                
+                {/* Tech Trending Tag */}
+                <div className="mb-6 bg-white/5 border border-white/10 p-3 rounded-xl flex items-center justify-between">
+                   <p className="text-[9px] uppercase tracking-widest font-black text-gray-400">🔥 Trending Tech</p>
+                   <p className="text-[10px] font-black text-white">Full Stack Web</p>
+                </div>
+
+                <div className="space-y-4 relative z-10">
                   {loadingMatches ? (
                     [1, 2, 3].map((i) => (
                       <div
@@ -394,47 +463,123 @@ export default function DashboardPage() {
                     ))
                   ) : matches.length === 0 ? (
                     <p className="text-gray-600 text-xs italic text-center py-4">
-                      Add skills to find matches.
+                      Add tech skills to find matches.
                     </p>
                   ) : (
-                    matches.map((m, i) => (
-                      <div
-                        key={m._id || i}
-                        className="p-4 rounded-2xl bg-white/3 border border-transparent hover:border-white/10 transition-all cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-[#4F86C6]/20 rounded-full flex items-center justify-center text-[#4F86C6] font-black text-xs uppercase">
-                            {m.name?.charAt(0)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-black group-hover:text-[#4F86C6] transition-colors">
-                              {m.name}
-                            </p>
-                            <div className="flex gap-2 mt-1 flex-wrap">
-                              {m.teachingSkills?.slice(0, 2).map((sk, idx) => (
-                                <span
-                                  key={idx}
-                                  className="text-[7px] font-black text-gray-500 uppercase tracking-widest"
-                                >
-                                  {sk.skillName}
-                                </span>
-                              ))}
+                    <>
+                      <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mb-2">Suggested Mentors</p>
+                      {matches.slice(0, 2).map((m, i) => (
+                        <div
+                          key={m._id || i}
+                          className="p-4 rounded-2xl bg-white/3 border border-transparent hover:border-white/10 transition-all cursor-pointer group mb-2"
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="w-10 h-10 bg-[#4F86C6]/20 rounded-full flex items-center justify-center text-[#4F86C6] font-black text-xs uppercase shadow-[0_0_15px_rgba(79,134,198,0.2)]">
+                              {m.name?.charAt(0)}
                             </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-black group-hover:text-[#4F86C6] transition-colors truncate">
+                                {m.name}
+                              </p>
+                              <div className="flex gap-2 mt-1 flex-wrap">
+                                {m.teachingSkills?.slice(0, 2).map((sk, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="text-[7px] font-black text-gray-400 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded"
+                                  >
+                                    {sk.skillName}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <span className="text-[10px] font-black text-green-400">
+                              {m.compatibilityScore}%
+                            </span>
                           </div>
-                          <span className="text-[10px] font-black text-green-400">
-                            {m.compatibilityScore}%
-                          </span>
                         </div>
-                      </div>
-                    ))
+                      ))}
+                      {matches.length > 2 && (
+                        <>
+                          <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mt-4 mb-2">Suggested Swaps</p>
+                          {matches.slice(2).map((m, i) => (
+                            <div
+                              key={m._id || i}
+                              className="p-4 rounded-2xl bg-white/3 border border-transparent hover:border-[#FF7849]/30 transition-all cursor-pointer group mb-2"
+                            >
+                              <div className="flex items-center gap-4">
+                                <div className="w-10 h-10 bg-[#FF7849]/20 rounded-full flex items-center justify-center text-[#FF7849] font-black text-xs uppercase shadow-[0_0_15px_rgba(255,120,73,0.2)]">
+                                  {m.name?.charAt(0)}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-black group-hover:text-[#FF7849] transition-colors truncate">
+                                    {m.name}
+                                  </p>
+                                  <div className="flex gap-2 mt-1 flex-wrap">
+                                    {m.learningSkills?.slice(0, 2).map((sk, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="text-[7px] font-black text-gray-400 uppercase tracking-widest bg-black/50 px-2 py-0.5 rounded"
+                                      >
+                                        Learns {sk.skillName}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </>
                   )}
                 </div>
                 <button
                   onClick={() => navigate("/explore")}
-                  className="w-full mt-6 py-4 bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-gray-200 transition-all shadow-[0_10px_20px_-10px_rgba(255,255,255,0.2)]"
+                  className="w-full mt-6 py-4 bg-white text-black font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-gray-200 transition-all shadow-[0_10px_20px_-10px_rgba(255,255,255,0.2)] relative z-10"
                 >
-                  Explore Network
+                  Explore Tech Community
                 </button>
+              </section>
+
+              {/* NETWORK / COMMUNITY */}
+              <section className="bg-gradient-to-tr from-[#161616] to-[#0F0F0F] border border-white/5 rounded-3xl p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Network & Community</h4>
+                  <div className="px-2 py-1 bg-green-500/20 rounded text-green-500 text-[8px] font-black uppercase tracking-widest">
+                    1.2k Active Now
+                  </div>
+                </div>
+
+                <div className="space-y-4 mb-8">
+                  <p className="text-[9px] uppercase font-black tracking-widest text-gray-500 mb-2">Joined Communities</p>
+                  
+                  <div className="group bg-white/5 border border-white/10 p-4 rounded-xl flex items-center justify-between hover:bg-white/10 transition-colors cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-[#FF7849]/20 flex items-center justify-center text-lg">⚡</div>
+                      <div>
+                        <p className="text-xs font-black text-white">Frontend Masters Cohort</p>
+                        <p className="text-[9px] font-mono text-gray-500">Live in 2 hrs</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="group bg-white/5 border border-white/10 p-4 rounded-xl flex items-center justify-between hover:bg-white/10 transition-colors cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-[#4F86C6]/20 flex items-center justify-center text-lg">⚙️</div>
+                      <div>
+                        <p className="text-xs font-black text-white">System Design Discussions</p>
+                        <p className="text-[9px] font-mono text-gray-500">45 new messages</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  to="/communities"
+                  className="block w-full text-center py-3 border border-white/20 text-white font-black text-[10px] uppercase tracking-[0.2em] rounded-xl hover:bg-white hover:text-black transition-all"
+                >
+                  Explore Communities
+                </Link>
               </section>
             </div>
           </div>

@@ -61,48 +61,63 @@ const HeroSection = () => {
         <section className="w-full lg:w-1/2 px-8 lg:px-24 flex flex-col justify-center z-10 py-12">
           <div className="space-y-8 max-w-xl">
             <div className="space-y-4">
+              <div className="flex gap-3 mb-6 animate-pulse">
+                <span className="bg-[#FF7849]/10 border border-[#FF7849]/20 text-[#FF7849] text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full">
+                  🔥 Trending: System Design
+                </span>
+                <span className="bg-[#4F86C6]/10 border border-[#4F86C6]/20 text-[#4F86C6] text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full hidden sm:block">
+                  Live Coding Sessions
+                </span>
+              </div>
               <h1 className="text-white text-5xl md:text-7xl font-rose leading-[1.1] tracking-tighter">
-                <span className="text-[#4F86C6]">Swap</span>
+                <span className="text-[#4F86C6]">Master</span>
                 <br />
                 <span className="text-white font-black drop-shadow-[0_0_20px_rgba(255,120,73,0.3)]">
-                  Skills,
+                  Tech Skills.
                 </span>
               </h1>
               <h1 className="text-white text-5xl md:text-7xl font-rose leading-[1.1] tracking-tighter">
                 <span className="text-[#FF7849] font-black drop-shadow-[0_0_20px_rgba(79,134,198,0.3)]">
-                  Not Cash.
+                  Learn Anything.
                 </span>
               </h1>
             </div>
 
             <p className="text-gray-500 text-sm md:text-lg leading-relaxed font-medium">
-              UpSkillr is the premier skill economy where your knowledge is your
-              currency. Swap skills directly, earn credits by teaching, and
-              learn from verified peers in real-time. Start today with{" "}
-              <span className="text-[#FF7849]">200 free credits</span>.
+              UpSkillr is the developer-first ecosystem to learn, teach, and grow in tech. Swap tech skills directly with peers to collaborate, or earn skill credits by mentoring others. Start today with{" "}
+              <span className="text-[#FF7849]">200 free skill credits</span>.
             </p>
 
-            <div className="inline-block pt-6">
-              <button className="group bg-white text-black px-10 py-5 rounded-3xl flex items-center gap-6 transition-all hover:bg-gray-200 active:scale-95 shadow-2xl">
-                <span className="font-black text-sm uppercase tracking-widest">
-                  Start Learning for Free
-                </span>
-                <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center transition-transform group-hover:translate-x-2">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  >
-                    <path
-                      d="M5 12h14m-7-7l7 7-7 7"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
-              </button>
+            <div className="flex flex-wrap gap-4 pt-6">
+              <Link to="/explore">
+                <button className="group bg-white text-black px-8 py-4 rounded-3xl flex items-center gap-4 transition-all hover:bg-gray-200 active:scale-95 shadow-2xl">
+                  <span className="font-black text-sm uppercase tracking-widest">
+                    Start Learning
+                  </span>
+                  <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center transition-transform group-hover:translate-x-2">
+                    <svg
+                      className="w-4 h-4 text-white"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    >
+                      <path
+                        d="M5 12h14m-7-7l7 7-7 7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                </button>
+              </Link>
+              <Link to="/creator">
+                <button className="group bg-transparent border-2 border-white/20 text-white px-8 py-4 rounded-3xl flex items-center gap-4 transition-all hover:bg-white/5 active:scale-95">
+                  <span className="font-black text-sm uppercase tracking-widest">
+                    Become a Mentor
+                  </span>
+                </button>
+              </Link>
             </div>
           </div>
         </section>

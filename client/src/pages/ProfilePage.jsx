@@ -102,27 +102,44 @@ export default function Profile() {
             <span className="text-2xl font-black text-[#FF7849]">{user?.skillCredits ?? 200} xp</span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-3">
-              <h3 className="text-[#FF7849] text-[10px] uppercase tracking-[0.2em] font-black italic">Teaching</h3>
-              <div className="flex flex-wrap gap-2">
-                {teachingSkills.map((s, i) => (
-                  <div key={i} className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[11px]">
-                    {s.skillName} <span className="opacity-40 ml-1">[{s.skillLevel}]</span>
-                  </div>
-                ))}
-                {!teachingSkills.length && <p className="text-gray-600 text-xs italic">No skills yet</p>}
+          <div className="grid grid-cols-1 gap-6 mt-6">
+            <div className="space-y-4">
+              <h3 className="text-[#FF7849] text-[10px] uppercase tracking-[0.2em] font-black italic border-b border-white/10 pb-2">Tech Stack (Teaching)</h3>
+              <div className="space-y-4">
+                {teachingSkills.map((s, i) => {
+                  let progress = 30;
+                  if (s.skillLevel === "Intermediate") progress = 60;
+                  if (s.skillLevel === "Advanced") progress = 85;
+                  if (s.skillLevel === "Expert") progress = 100;
+                  
+                  return (
+                    <div key={i} className="bg-white/5 border border-white/10 p-4 rounded-xl flex flex-col gap-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-bold text-white tracking-widest uppercase">{s.skillName}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-[10px] tracking-widest text-gray-500 uppercase font-bold">{s.skillLevel}</span>
+                          <span className="text-[10px] text-[#FF7849] font-black bg-[#FF7849]/10 px-2 py-0.5 rounded">{progress * 10} XP</span>
+                        </div>
+                      </div>
+                      <div className="w-full h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/5">
+                        <div className="h-full bg-gradient-to-r from-[#FF7849]/50 to-[#FF7849]" style={{ width: `${progress}%` }}></div>
+                      </div>
+                    </div>
+                  );
+                })}
+                {!teachingSkills.length && <p className="text-gray-600 text-xs italic">No tech skills yet</p>}
               </div>
             </div>
-            <div className="space-y-3">
-              <h3 className="text-[#4F86C6] text-[10px] uppercase tracking-[0.2em] font-black italic">Learning</h3>
+
+            <div className="space-y-4 mt-2">
+              <h3 className="text-[#4F86C6] text-[10px] uppercase tracking-[0.2em] font-black italic border-b border-white/10 pb-2">Learning Goals</h3>
               <div className="flex flex-wrap gap-2">
                 {learningSkills.map((s, i) => (
-                  <div key={i} className="bg-white/5 border border-white/10 px-3 py-1.5 rounded-full text-[11px]">
+                  <div key={i} className="bg-[#4F86C6]/10 border border-[#4F86C6]/20 px-4 py-2 rounded-xl text-xs font-bold text-[#4F86C6] uppercase tracking-widest">
                     {s.skillName}
                   </div>
                 ))}
-                {!learningSkills.length && <p className="text-gray-600 text-xs italic">No goals yet</p>}
+                {!learningSkills.length && <p className="text-gray-600 text-xs italic">No learning goals yet</p>}
               </div>
             </div>
           </div>

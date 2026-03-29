@@ -50,20 +50,31 @@ export default function HowItWorks() {
 
         <div className="space-y-6 max-w-lg">
           <p className="text-lg md:text-xl text-gray-400 font-mono leading-relaxed">
-            UpSkillr works on a simple idea: bypassing the credit card. Build
-            your profile, find a match, and swap skills directly or use credits.
+            UpSkillr is built for developers by developers. Here is how you learn, teach, and grow:
           </p>
 
-          <div className="bg-white/5 border-l-2 border-[#FF7849] p-6 rounded-r-2xl space-y-4">
-            <p className="text-sm md:text-base text-white font-mono leading-relaxed">
-              Earn credits when you{" "}
-              <span className="text-[#4F86C6] font-bold">teach</span>. <br />
-              Spend them when you{" "}
-              <span className="text-[#FF7849] font-bold">learn</span>.
-            </p>
-            <p className="font-mono text-xs uppercase tracking-[0.3em] text-[#FF7849] font-black">
-              Start with 200 free credits.
-            </p>
+          <div className="space-y-4">
+            {/* Flow 1 */}
+            <div className="bg-white/5 border-l-2 border-[#4F86C6] p-4 rounded-r-2xl">
+              <h3 className="text-[#4F86C6] font-black uppercase text-xs tracking-widest mb-1">1. Skill Swap</h3>
+              <p className="text-sm text-gray-300 font-mono">
+                Peer-to-peer tech learning. Learn one skill while teaching another.
+              </p>
+            </div>
+            {/* Flow 2 */}
+            <div className="bg-white/5 border-l-2 border-[#FF7849] p-4 rounded-r-2xl">
+              <h3 className="text-[#FF7849] font-black uppercase text-xs tracking-widest mb-1">2. Mentorship</h3>
+              <p className="text-sm text-gray-300 font-mono">
+                Learn from experienced developers. Credit-based sessions.
+              </p>
+            </div>
+            {/* Flow 3 */}
+            <div className="bg-white/5 border-l-2 border-white/20 p-4 rounded-r-2xl">
+              <h3 className="text-white font-black uppercase text-xs tracking-widest mb-1">3. Communities</h3>
+              <p className="text-sm text-gray-300 font-mono">
+                Join or build tech learning communities. Live sessions, discussions, shared resources.
+              </p>
+            </div>
           </div>
         </div>
 

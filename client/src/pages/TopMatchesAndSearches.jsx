@@ -11,7 +11,7 @@ function MatchCard({ match }) {
       {/* User Info */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#4F86C6]/30 to-[#FF7849]/20 flex items-center justify-center text-white font-black text-base uppercase">
+          <div className="w-12 h-12 rounded-full bg-linear-to-br from-[#4F86C6]/30 to-[#FF7849]/20 flex items-center justify-center text-white font-black text-base uppercase">
             {match.name?.charAt(0)}
           </div>
           <div>
@@ -136,7 +136,7 @@ export default function TopMatchesAndSearches() {
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search for skills (e.g. React, Python, UI Design)..."
-                  className="w-full bg-[#161616] border border-white/10 rounded-[24px] py-5 pl-14 pr-6 text-sm outline-none focus:border-[#4F86C6]/50 focus:shadow-[0_0_30px_rgba(79,134,198,0.1)] transition-all placeholder:text-gray-600"
+                  className="w-full bg-[#161616] border border-white/10 rounded-3xl py-5 pl-14 pr-6 text-sm outline-none focus:border-[#4F86C6]/50 focus:shadow-[0_0_30px_rgba(79,134,198,0.1)] transition-all placeholder:text-gray-600"
                 />
               </div>
               <button type="submit" className="px-6 py-3 bg-[#4F86C6] text-black font-black text-[10px] uppercase tracking-widest rounded-[24px] hover:bg-[#6a9fd4] transition-all flex-shrink-0">
