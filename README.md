@@ -1,96 +1,129 @@
-# Skill Swap (UpSkillr)
-A peer-to-peer tech skill learning and real-time collaboration platform.
+# UpSkillr — The Tech Learning & Collaboration Ecosystem
 
-## 🚀 Overview
-Skill Swap (also known as UpSkillr) is a platform designed for users to teach and learn tech skills from each other. Users can book sessions with mentors, perform mutual "skill swaps," and engage in real-time video calls with integrated chat and document sharing. The platform features an automated ranking system ("Code Spark" to "Code Legend"), a credit-based economy, and a robust review system.
+**Learn, Teach, and Grow in Tech — All in One Platform.**
 
-## ✨ Key Features
-- **Authentication & Profiles:** Secure JWT authentication with deep user profiles showcasing teaching/learning skills and availability.
-- **Skill Economy:** Users earn credits for teaching sessions, which can be spent to book learning sessions. Mutual swaps cost 0 credits and reward both parties equally based on actual call duration.
-- **Automated Progression:** Users dynamically rank up across 7 prestige levels based on sessions completed, hours taught, and absolute reputation score.
-- **Learning Rooms:** Real-time, in-browser WebRTC video calls powered by Socket.io signaling. Features include "Perfect Negotiation" to prevent call drops, camera/mic toggling, and integrated chat.
-- **Reviews & Ratings:** In-call interactive review UI that triggers immediately upon session completion to capture instantaneous feedback.
-- **Real-time Notifications:** In-app push notifications for bookings, cancellations, rank-ups, and credit transaction receipts.
+UpSkillr is a modern, developer-first platform designed to facilitate peer-to-peer tech learning, mentorship, and community-driven growth. Unlike traditional platforms, UpSkillr treats engineering knowledge as a currency, enabling a circular economy of skill sharing.
+
+---
+
+## 🚀 Product Vision
+UpSkillr aims to be the complete tech growth platform where users can:
+- **Learn** any tech skill from verified peers or mentors.
+- **Teach** others to earn Skill Credits and build reputation.
+- **Collaborate** through real-time sessions and community cohorts.
+- **Grow** with AI-optimized roadmaps and personalized matching.
+
+---
+
+## ✨ Core Features
+
+### 1. Skill Swap (Peer-to-Peer Learning)
+The heart of UpSkillr. Users can find peers to exchange tech skills directly.
+- **Mutual Exchange:** Teach a skill you master (e.g., React) in exchange for learning one you need (e.g., System Design).
+- **Zero Cost:** Mutual swaps cost 0 credits, rewarding both parties with XP and session history.
+- **Real-time Collaboration:** Integrated video calls with chat and shared resources.
+
+### 2. Paid Mentorship (Credit-Based)
+Accelerate your career by learning from experienced industry developers.
+- **Credit Economy:** Spend **Skill Credits** to book sessions with top-rated mentors.
+- **Verified Expertise:** Mentors are ranked based on community reviews and teaching history.
+- **Flexible Scheduling:** Book sessions according to mentor availability.
+
+### 3. Tech Communities & Cohorts
+Join intensive, bootcamp-style tech communities focused on specific domains.
+- **Live Sessions:** Join live collaborative coding and discussion sessions.
+- **Resource Sharing:** Access shared notes, recordings, and learning materials.
+- **Peer Discussions:** Engage in chat-based discussions within dedicated cohorts.
+
+### 4. AI-Powered Learning Experience
+A smart, data-driven layer that optimizes your growth.
+- **Personalized Tech Roadmaps:** AI analyzes your Tech Stack and goals to suggest the best next steps.
+- **Smart Matching:** Intelligent peer and mentor matching based on compatibility and learning paths.
+- **Learning Optimization:** Continuous suggestions to keep your 5-day streak and hit your goals.
+
+---
 
 ## 🛠️ Tech Stack
-### **Frontend**
-- **React.js (Vite):** Core UI framework
-- **Tailwind CSS:** Utility-first styling with custom animations
-- **React Router:** Client-side routing
-- **Socket.io-client:** Real-time event handling
-- **Axios:** API communication with built-in token interceptors
-- **WebRTC:** Native browser peer-to-peer video streaming
 
-### **Backend**
-- **Node.js & Express.js:** Server framework
-- **MongoDB & Mongoose:** Database and ODM (featuring compound indexes for high-performance skill searches)
-- **Socket.io:** Real-time event broadcasting (signaling, notifications, chat)
-- **JWT & bcryptjs:** Secure stateless authentication and password hashing
+### **Frontend**
+- **React.js (Vite):** Core UI framework.
+- **Vanilla CSS & Tailwind:** Premium, custom-styled Glassmorphic UI.
+- **Socket.io-client:** Real-time event handling for chat and notifications.
+- **WebRTC:** High-performance, peer-to-peer video streaming for sessions.
+
+### **Backend** (Existing Foundation)
+- **Node.js & Express.js:** Scalable server architecture.
+- **MongoDB & Mongoose:** Efficient data modeling for users, sessions, and credits.
+- **Socket.io:** Signaling server for WebRTC and real-time updates.
+- **JWT Authentication:** Secure, stateless user sessions.
+
+---
+
+## 🗓️ Planned Roadmap (Detailed Implementation)
+
+While the UI foundations are laid, the following features are in the active implementation pipeline:
+
+### Phase 1: AI Integration (Backend Logic)
+- [ ] **Recommendation Engine:** Implement vector-based matching for "Smart Mentor Matching."
+- [ ] **Roadmap Generator:** Integrate LLM APIs to generate dynamic markdown roadmaps based on user profile skills.
+- [ ] **Analytics Engine:** Deep dive into "Learning Optimization" metrics (XP velocity, skill gap analysis).
+
+### Phase 2: Enhanced Communities
+- [ ] **Cohort Management:** Backend support for creating community-wide events and recurring live sessions.
+- [ ] **Knowledge Base:** A repository for "Resource Sharing" where session notes can be permanently stored and tagged.
+- [ ] **Group Chat:** Migrating from 1-on-1 session chat to persistent Community Discord-style channels.
+
+### Phase 3: Gamification & Economy
+- [ ] **Code Legend Tiers:** Expansion of the rank system (Code Spark → Code Legend) with unique badges and profile cosmetics.
+- [ ] **Skill Credit Marketplace:** Ability to purchase or transfer Skill Credits securely.
+- [ ] **Global Leaderboard:** Weekly activity tracking for top contributors and learners.
+
+---
 
 ## 📂 Project Structure
 
 ```text
-📦 Skill Swap
+📦 UpSkillr
  ┣ 📂 client (React / Vite)
  ┃ ┣ 📂 src
- ┃ ┃ ┣ 📂 components (Reusable UI components, Navbar, Modals)
- ┃ ┃ ┣ 📂 context (Global state like AuthProvider, ToastProvider)
- ┃ ┃ ┣ 📂 hooks (Custom React Hooks, useSocket)
- ┃ ┃ ┣ 📂 pages (Dashboard, LearningRoom, Profile, etc.)
- ┃ ┃ ┣ 📂 services (API abstraction layers: auth.service, session.service, etc.)
- ┃ ┃ ┗ 📜 App.jsx & main.jsx
- ┃ ┗ 📜 tailwind.config.js / vite.config.js
+ ┃ ┃ ┣ 📂 components/ui (Premium Glassmorphic Components)
+ ┃ ┃ ┣ 📂 pages (Dashboard, LearningRoom, Profile, Explore)
+ ┃ ┃ ┣ 📂 context (Auth, Toast, Dashboard states)
+ ┃ ┃ ┣ 📂 services (API Abstraction Layer)
+ ┃ ┃ ┗ 📜 index.css (Central Design System)
  ┣ 📂 server (Node / Express)
- ┃ ┣ 📂 src
- ┃ ┃ ┣ 📂 controllers (Business logic for sessions, users, reviews)
- ┃ ┃ ┣ 📂 middleware (Auth verification, validators)
- ┃ ┃ ┣ 📂 models (Mongoose schemas: User, Session, Review, CreditTransaction)
- ┃ ┃ ┣ 📂 routes (Express router definitions)
- ┃ ┃ ┗ 📂 utils (Socket initialization, DB connection, skillLevel scaling logic)
- ┃ ┗ 📜 server.js (Entry point & Socket attach)
+ ┃ ┣ 📂 controllers (Session, User, and Economy Logic)
+ ┃ ┣ 📂 models (Mongoose schemas for broad tech domains)
+ ┃ ┣ 📂 routes (API Endpoints)
+ ┃ ┗ 📜 server.js (Real-time Socket & Signaling Entry)
 ```
 
-## ⚙️ Installation & Setup
+---
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repo-url>
-   cd "Skill Swap"
-   ```
+## ⚙️ Setup & Installation
 
-2. **Setup the Backend:**
+1. **Install Dependencies:**
    ```bash
-   cd server
-   npm install
+   # Root
+   cd client && npm install
+   cd ../server && npm install
    ```
-   *Create a `.env` file in the `/server` directory with:*
-   ```env
-   PORT=6000
-   MONGO_URI=your_mongodb_connection_string
-   ACCESS_TOKEN_SECRET=your_jwt_secret
-   REFRESH_TOKEN_SECRET=your_refresh_secret
-   CLIENT_ORIGIN=http://localhost:5173
-   ```
-   *Run the server:*
+2. **Environment Configuration:**
+   - Configure `.env` in both `/client` and `/server` (refer to `.env.example`).
+3. **Run in Development:**
    ```bash
-   npm run dev
+   # Server (Port 6000)
+   npm run dev (in /server)
+   # Client (Port 5173)
+   npm run dev (in /client)
    ```
 
-3. **Setup the Frontend:**
-   ```bash
-   cd ../client
-   npm install
-   ```
-   *Create a `.env` file in the `/client` directory with:*
-   ```env
-   VITE_API_URL=http://localhost:6000
-   ```
-   *Run the client:*
-   ```bash
-   npm run dev
-   ```
+---
 
-## 🛡️ Security & Architecture Notes
-- Uses `helmet` to secure HTTP headers, `express-rate-limit` to prevent brute-force attacks, and `cors` strictly bound to the client origin.
-- Modern WebRTC "Perfect Negotiation" pattern natively implements rollback logic for asynchronous connection state collisions.
-- Event-driven Socket.io architecture ensures real-time UI reactions across disparate connected clients (e.g. updating a learner's screen immediately when a teacher marks a room as complete).
+## 🛡️ Security
+- **Perfect Negotiation:** Robust WebRTC signaling for uninterrupted sessions.
+- **Stateless Auth:** Secure JWT-based access control.
+- **Data Integrity:** Strict Mongoose schemas to ensure consistent credit transactions.
+
+---
+*UpSkillr — Master your craft through collaboration.*
